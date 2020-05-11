@@ -12,6 +12,7 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
 <p align="center">
 <img src="figures/teaser.png" height="400" >
 <p>
+
 ## Quantitative Results
 
 #### Wireframe Dataset
