@@ -17,6 +17,7 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
 
 #### Wireframe Dataset
 
+<p align="center">
 <table style="text-align:center">
 <tr>
     <td rowspan="2" style="text-align:center"> Method </td> 
@@ -95,6 +96,8 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
   <td><b>86.1</b><sup><span>&#8224;</span></sup>
 </td><td><b>83.1</b><sup><span>&#8224;</span></sup></td>
 </tr>  
+</table>
+</p>
 
 <p align="center">
 <img src="figures/sAP10-wireframe.png" height="300" >
@@ -104,7 +107,7 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
 
 
 #### YorkUrban Dataset
-
+<p align="center">
 <table style="text-align:center">
 <tr>
     <td rowspan="2" style="text-align:center"> Method </td> 
@@ -183,7 +186,8 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
   <td><b>61.2</b><sup><span>&#8224;</span></sup>
 </td><td><b>66.3</b><sup><span>&#8224;</span></sup></td>
 </tr>  
-
+</table>
+</p>
 
 
 <p align="center">
