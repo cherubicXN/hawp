@@ -99,8 +99,8 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
 
 
 <p align="left">
-<img src="figures/sAP10-wireframe.png" height="300" >
-<img src="figures/APH-wireframe.png" height="300" >
+<img src="figures/sAP10-wireframe.png" height="260" >
+<img src="figures/APH-wireframe.png" height="260" >
 </p>
 
 
@@ -190,14 +190,14 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
 </p>
 
 
-<p align="center">
-<img src="figures/sAP10-york.png" height="300" >
-<img src="figures/APH-york.png" height="300" >
+<p align="left">
+<img src="figures/sAP10-york.png" height="260" >
+<img src="figures/APH-york.png" height="260" >
 <p>
 
-## Installation
+## Installation & Pretrained Model
 
-Coming soon
+Will be finished in this week.
 
 ## Citations
 If you find our work useful in your research, please consider citing:
