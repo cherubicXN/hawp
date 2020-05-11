@@ -17,8 +17,7 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
 
 #### Wireframe Dataset
 
-<p align="center">
-<table style="text-align:center">
+<table style="text-align:center" align="center">
 <tr>
     <td rowspan="2" style="text-align:center"> Method </td> 
     <td colspan="7" style="text-align:center"> Wireframe Dataset </td>
@@ -97,7 +96,8 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
 </td><td><b>83.1</b><sup><span>&#8224;</span></sup></td>
 </tr>  
 </table>
-</p>
+
+
 
 <p align="center">
 <img src="figures/sAP10-wireframe.png" height="300" >
