@@ -98,11 +98,11 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
 </table>
 
 
-
-<p align="center">
+<p align="left">
 <img src="figures/sAP10-wireframe.png" height="300" >
 <img src="figures/APH-wireframe.png" height="300" >
 </p>
+
 
 
 
