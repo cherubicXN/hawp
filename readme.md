@@ -7,7 +7,7 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
 - The proposed HAWP is **fully end-to-end**.
 - The proposed HAWP **does not require squeeze module**.
 - **State-of-the-art performance** on the Wireframe dataset and YorkUrban dataset.
-- The proposed HAWP achievs **29.5 FPS** on single V100 for 1-batch inference
+- The proposed HAWP achievs **29.5 FPS** on a GPU (Tesla V100) for 1-batch inference.
 
 <p align="center">
 <img src="figures/teaser.png" height="400" >
