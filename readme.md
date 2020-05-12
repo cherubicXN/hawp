@@ -2,6 +2,8 @@
 
 This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/2003.01663).
 
+[News] The pretrained model is released.
+
 ## Highlights
 - We propose **a fast and parsimonious parsing method HAWP** to accurately and robustly detect a vectorized wireframe in an input image with a single forward pass. 
 - The proposed HAWP is **fully end-to-end**.
