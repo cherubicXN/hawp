@@ -195,8 +195,7 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
 <img src="figures/APH-york.png" height="260" >
 <p>
 
-## Installation & Pretrained Model
-
+## Installation (tested on Ubuntu-18.04, CUDA 10.0, GCC 7.4.0)
 ```
 conda create -n hawp python=3.6
 conda install pytorch torchvision cudatoolkit=10.0 -c pytorch 
@@ -207,8 +206,16 @@ conda develop .
 pip install -r requirement.txt
 python setup.py build_ext --inplace
 ```
-Coming soon
 
+## Quickstart with the pretrained model ([Google Drive](https://drive.google.com/file/d/1IpDMdW5EwQROqJkULVxRcqNlk_sQpnJe/view?usp=sharing))
+- Download the pretrained model and unzip the model to **"ROOT_DIR/outputs/hawp"**
+
+```
+python script/predict.py --config-file config-files/hawp.yaml --img figures/example.png
+```
+
+## Training & Testing
+- Finished it in this week
 ## Citations
 If you find our work useful in your research, please consider citing:
 ```
