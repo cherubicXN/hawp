@@ -27,6 +27,9 @@ parser.add_argument("--config-file",
                     required=True,
                     )
 
+parser.add_argument("--img",type=str,required=True,
+                    help="image path")                    
+
 parser.add_argument("--threshold",
                     type=float,
                     default=0.97)
@@ -64,17 +67,21 @@ def test(cfg, impath):
     lines = output['lines_pred'].numpy()
     scores = output['lines_score'].numpy()
     idx = scores>args.threshold
+
+    plt.figure(figsize=(6,6))    
+    plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0, 
+            hspace = 0, wspace = 0)
     plt.imshow(image)
     plt.plot([lines[idx,0],lines[idx,2]],
                         [lines[idx,1],lines[idx,3]], 'b-')
     plt.plot(lines[idx,0],lines[idx,1],'c.')                        
     plt.plot(lines[idx,2],lines[idx,3],'c.')                        
+    plt.axis('off')
     plt.show()
     
 if __name__ == "__main__":
 
     cfg.merge_from_file(args.config_file)
-    cfg.merge_from_list(args.opts)
     cfg.freeze()
     
     output_dir = cfg.OUTPUT_DIR
@@ -83,5 +90,5 @@ if __name__ == "__main__":
     logger.info("Loaded configuration file {}".format(args.config_file))
 
 
-    test(cfg,'figures/example.png')
+    test(cfg,args.img)
 
