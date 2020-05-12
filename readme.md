@@ -99,8 +99,8 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
 
 
 <p align="left">
-<img src="figures/sAP10-wireframe.png" height="300" >
-<img src="figures/APH-wireframe.png" height="300" >
+<img src="figures/sAP10-wireframe.png" height="260" >
+<img src="figures/APH-wireframe.png" height="260" >
 </p>
 
 
@@ -190,12 +190,12 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
 </p>
 
 
-<p align="center">
-<img src="figures/sAP10-york.png" height="300" >
-<img src="figures/APH-york.png" height="300" >
+<p align="left">
+<img src="figures/sAP10-york.png" height="260" >
+<img src="figures/APH-york.png" height="260" >
 <p>
 
-## Installation
+## Installation & Pretrained Model
 
 ```
 conda create -n hawp python=3.6
@@ -221,6 +221,6 @@ year = {2020},
 }
 ```
 
-## Acknoledgement
+## Acknowledgment
 We acknowledge the effort from the authors of the Wireframe dataset and the YorkUrban dataset. These datasets make accurate line segment detection and wireframe parsing possible.
 
