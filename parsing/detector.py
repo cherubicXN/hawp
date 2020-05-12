@@ -32,13 +32,13 @@ def non_maximum_suppression(a):
     return a * mask
 
 def get_junctions(jloc, joff, topk = 300, th=0):
-    height, width = jloc.size(0), jloc.size(1)
+    height, width = jloc.size(1), jloc.size(2)
     jloc = jloc.reshape(-1)
     joff = joff.reshape(2, -1)
 
     scores, index = torch.topk(jloc, k=topk)
-    y = (index / 128).float() + torch.gather(joff[1], 0, index) + 0.5
-    x = (index % 128).float() + torch.gather(joff[0], 0, index) + 0.5
+    y = (index / height).float() + torch.gather(joff[1], 0, index) + 0.5
+    x = (index % width).float() + torch.gather(joff[0], 0, index) + 0.5
 
     junctions = torch.stack((x, y)).t()
 
@@ -89,7 +89,10 @@ class WireframeDetector(nn.Module):
         py1 = (py0 + 1).clamp(min=0, max=h-1)
         px0l, py0l, px1l, py1l = px0.long(), py0.long(), px1.long(), py1.long()
 
-        xp = ((features_per_image[:, py0l, px0l] * (py1-py) * (px1 - px)+ features_per_image[:, py1l, px0l] * (py - py0) * (px1 - px)+ features_per_image[:, py0l, px1l] * (py1 - py) * (px - px0)+ features_per_image[:, py1l, px1l] * (py - py0) * (px - px0)).reshape(128,-1,32)
+        xp = ((features_per_image[:, py0l, px0l] * (py1 -py) * (px1 - px)+ 
+               features_per_image[:, py1l, px0l] * (py - py0) * (px1 - px)+ 
+               features_per_image[:, py0l, px1l] * (py1 - py) * (px - px0)+ 
+               features_per_image[:, py1l, px1l] * (py - py0) * (px - px0)).reshape(128,-1,32)
         ).permute(1,0,2)
 
 
@@ -132,23 +135,12 @@ class WireframeDetector(nn.Module):
         batch_size = md_pred.size(0)
         assert batch_size == 1
 
-
-        # for i, (md_pred_per_im, dis_pred_per_im,res_pred_per_im) in enumerate(zip(md_pred, dis_pred,res_pred)):
-            # lines_pred = []
-            # for scale in [4.0,4.5,5.0]:
         
         extra_info['time_proposal'] = time.time()
         if self.use_residual:
             lines_pred = self.proposal_lines_new(md_pred[0],dis_pred[0],res_pred[0]).view(-1,4)
         else:
             lines_pred = self.proposal_lines_new(md_pred[0], dis_pred[0], None).view(-1, 4)
-            # import pdb
-            # pdb.set_trace()
-            # for scale in [-1.0,0.0,1.0]:
-            #     _ = self.proposal_lines(md_pred_per_im, dis_pred_per_im+scale*res_pred_per_im)
-            #     lines_pred.append(_.view(-1,4))
-            # lines_pred = torch.cat(lines_pred)
-            # N = metas[i]['junc'].size(0)
         jloc_pred_nms = non_maximum_suppression(jloc_pred[0])
         topK = min(300, int((jloc_pred_nms>0.008).float().sum().item()))
         # import pdb
@@ -158,23 +150,14 @@ class WireframeDetector(nn.Module):
 
         extra_info['time_proposal'] = time.time() - extra_info['time_proposal']
 
-            # juncs_pred, _ = get_junctions(non_maximum_suppression(jloc_pred[i]), joff_pred[i], topk=min(300,2*N+2))
-
         extra_info['time_matching'] = time.time()
         dis_junc_to_end1, idx_junc_to_end1 = torch.sum((lines_pred[:,:2]-juncs_pred[:,None])**2,dim=-1).min(0)
         dis_junc_to_end2, idx_junc_to_end2 = torch.sum((lines_pred[:,2:] - juncs_pred[:, None]) ** 2, dim=-1).min(0)
 
         idx_junc_to_end_min = torch.min(idx_junc_to_end1,idx_junc_to_end2)
         idx_junc_to_end_max = torch.max(idx_junc_to_end1,idx_junc_to_end2)
-        # import pdb
-        # pdb.set_trace()
-            # direction = juncs_pred[idx_junc_to_end_min]-juncs_pred[idx_junc_to_end_max]
-            # direction = direction/(torch.sqrt(torch.sum(direction**2,dim=-1,keepdim=True)).clamp(1e-6))
-            #
-            #
-            # cos_dis   = torch.abs(direction[:,0]*normals[:,0]+direction[:,1]*normals[:,1])
-        # iskeep = (idx_junc_to_end_min<idx_junc_to_end_max)*((dis_junc_to_end1+dis_junc_to_end2)/2.0<10*10)#*(dis_junc_to_end2<100)
-        iskeep = (idx_junc_to_end_min < idx_junc_to_end_max)# * (dis_junc_to_end1< 10*10)*(dis_junc_to_end2<10*10)  # *(dis_junc_to_end2<100)
+        
+        iskeep = (idx_junc_to_end_min < idx_junc_to_end_max)
 
         idx_lines_for_junctions = torch.unique(
             torch.cat((idx_junc_to_end_min[iskeep,None],idx_junc_to_end_max[iskeep,None]),dim=1),
@@ -293,18 +276,10 @@ class WireframeDetector(nn.Module):
 
         lines_batch = []
         extra_info = {
-            # 'recall_10': [],
-            # 'recall_line_adjusted': [],
-            # 'recall_10_gt': [],
-            # 'prec_10_gt': [],
         }
 
         batch_size = md_pred.size(0)
-        # import pdb
-        # pdb.set_trace()
 
-        # extra_info['recall_10_gt'] = sum(extra_info['recall_10_gt'])/ len(extra_info['recall_10_gt'])
-        # extra_info['prec_10_gt'] = sum(extra_info['prec_10_gt']) / len(extra_info['prec_10_gt'])
 
         for i, (md_pred_per_im, dis_pred_per_im,res_pred_per_im,meta) in enumerate(zip(md_pred, dis_pred,res_pred,metas)):
             lines_pred = []
@@ -382,21 +357,7 @@ class WireframeDetector(nn.Module):
 
             loss_dict['loss_pos'] += loss_positive/batch_size
             loss_dict['loss_neg'] += loss_negative/batch_size
-
-            # import pdb
-            # pdb.set_trace()
-            # dis = linesegment_distance(lines_pred,metas[i]['lines'])
-            # recall = (dis.min(1)[0]<=10).float().mean().item()
-            # extra_info['recall_10'].append(recall)
-            # dis = linesegment_distance(lines_adjusted,metas[i]['lines'])
-            # recall = (dis.min(1)[0]<=10).float().mean().item()
-            # extra_info['recall_line_adjusted'].append(recall)
-
-            # print(prec, recall)
-        # extra_info['recall_10'] = sum(extra_info['recall_10'])/len(extra_info['recall_10'])
-        # extra_info['recall_line_adjusted'] = sum(extra_info['recall_line_adjusted']) / len(extra_info['recall_line_adjusted'])
-        # import pdb
-        # pdb.set_trace()
+          
 
         return loss_dict, extra_info
 
