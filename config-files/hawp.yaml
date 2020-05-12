@@ -54,4 +54,4 @@ MODEL:
     loss_pos: 1.0      # pos   classification
     loss_neg: 1.0      # neg   classification
 
-OUTPUT_DIR: "outputs/hawp2"
+OUTPUT_DIR: "outputs/hawp"

@@ -1,4 +1,5 @@
 import torch
+import parsing
 from parsing.config import cfg
 from parsing.utils.comm import to_device
 from parsing.dataset import build_test_dataset
@@ -87,7 +88,7 @@ if __name__ == "__main__":
     cfg.freeze()
     
     output_dir = cfg.OUTPUT_DIR
-    logger = setup_logger('hawp', output_dir, out_file='test.log')
+    logger = setup_logger('hawp', output_dir)
     logger.info(args)
     logger.info("Loaded configuration file {}".format(args.config_file))
 

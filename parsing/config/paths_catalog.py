@@ -3,8 +3,8 @@ import os.path as osp
 
 class DatasetCatalog(object):
 
-    DATA_DIR = osp.join(osp.dirname(__file__),
-                '..','data')
+    DATA_DIR = osp.abspath(osp.join(osp.dirname(__file__),
+                '..','data'))
     
     DATASETS = {
         'wireframe_train': {

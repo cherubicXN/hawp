@@ -1,0 +1,6 @@
+opencv-python
+cython
+matplotlib
+yacs
+scikit-image
+tqdm

@@ -197,6 +197,16 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
 
 ## Installation
 
+```
+conda create -n hawp python=3.6
+conda install pytorch torchvision cudatoolkit=10.0 -c pytorch 
+
+cd hawp 
+conda develop .
+
+pip install -r requirement.txt
+python setup.py build_ext --inplace
+```
 Coming soon
 
 ## Citations
