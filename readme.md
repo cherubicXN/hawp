@@ -211,6 +211,6 @@ year = {2020},
 }
 ```
 
-## Acknoledgement
+## Acknowledgment
 We acknowledge the effort from the authors of the Wireframe dataset and the YorkUrban dataset. These datasets make accurate line segment detection and wireframe parsing possible.
 
