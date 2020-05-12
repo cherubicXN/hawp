@@ -215,7 +215,7 @@ python script/predict.py --config-file config-files/hawp.yaml --img figures/exam
 ```
 
 ## Training & Testing
-- Finished it in this week
+- I will finish it in this week
 ## Citations
 If you find our work useful in your research, please consider citing:
 ```
