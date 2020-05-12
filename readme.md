@@ -223,7 +223,8 @@ If you find our work useful in your research, please consider citing:
 ```
 @inproceedings{HAWP,
 title = "Holistically-Attracted Wireframe Parsing",
-author = "Nan Xue and Tianfu Wu and Song Bai and Fu-Dong Wang and Gui-Song Xia and Liangpei Zhang and Philip H.S. Torr
+author = "Nan Xue and Tianfu Wu and Song Bai and Fu-Dong Wang 
+       and Gui-Song Xia and Liangpei Zhang and Philip H.S. Torr
 ",
 booktitle = "IEEE Conference on Computer Vision and Pattern Recognition (CVPR)",
 year = {2020},
