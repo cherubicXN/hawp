@@ -213,7 +213,7 @@ python setup.py build_ext --inplace
 - Download the pretrained model and unzip the model to **"ROOT_DIR/outputs/hawp"**
 
 ```
-python script/predict.py --config-file config-files/hawp.yaml --img figures/example.png
+python scripts/predict.py --config-file config-files/hawp.yaml --img figures/example.png
 ```
 
 ## Training & Testing
