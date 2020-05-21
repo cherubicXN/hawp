@@ -79,10 +79,25 @@ if __name__ == "__main__":
     rcs = tp
     pcs = tp/np.maximum(tp+fp,1e-9)
     sAP = AP(tp,fp)*100
-    print(sAP)
+    sAP_string = 'sAP{} = {:.1f}'.format(args.threshold,sAP)
+    print(sAP_string)
     try:
+        f_scores = np.linspace(0.2,0.9,num=8)
+        for f_score in f_scores:
+            x = np.linspace(0.01,1)
+            y = f_score*x/(2*x-f_score)
+            l, = plt.plot(x[y >= 0], y[y >= 0], color=[0,0.5,0], alpha=0.3)
+            plt.annotate("f={0:0.1}".format(f_score), xy=(0.9, y[45] + 0.02), alpha=0.4,fontsize=10)
+        
+        plt.rc('legend',fontsize=10)
+        plt.grid(True)
+        plt.axis([0.0, 1.0, 0.0, 1.0])
+        plt.xticks(np.arange(0, 1.0, step=0.1))
+        plt.xlabel("Recall")
+        plt.ylabel("Precision")
+        plt.yticks(np.arange(0, 1.0, step=0.1))
         plt.plot(rcs,pcs,'r-')
-        plt.title(str(sAP))
+        plt.title(sAP_string)
         plt.show()
     except:
         pass
