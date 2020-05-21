@@ -1,5 +1,5 @@
 outputs/*
-**/.DS_Store
+**/*.DS_Store
 parsing/data/wireframe/images/*
-*/.DS_Store
 .vscode/*
+data/*

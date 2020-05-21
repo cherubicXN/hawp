@@ -2,7 +2,7 @@
 
 This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/2003.01663).
 
-<span style="color:red">[News]</span> The pretrained model is released.
+[News] The pretrained model is released.
 
 ## Highlights
 - We propose **a fast and parsimonious parsing method HAWP** to accurately and robustly detect a vectorized wireframe in an input image with a single forward pass. 
@@ -213,18 +213,28 @@ python setup.py build_ext --inplace
 - Download the pretrained model and unzip the model to **"ROOT_DIR/outputs/hawp"**
 
 ```
-python scripts/predict.py --config-file config-files/hawp.yaml --img figures/example.png
+python script/predict.py --config-file config-files/hawp.yaml --img figures/example.png
 ```
 
+<<<<<<< Updated upstream
 ## Training & Testing
-- I will finish it in this week
+### Data Preparation
+- Download the [Wireframe dataset](https://github.com/huangkuns/wireframe) and the [YorkUrban dataset](http://www.elderlab.yorku.ca/resources/york-urban-line-segment-database-information/) from their project pages.
+- Download the json-format annotations ([Google Drive]())
+=======
+## Training
+- Download the Wireframe dataset from (https://github.com/huangkuns/wireframe)
+>>>>>>> Stashed changes
+
+## Testing
+
 ## Citations
 If you find our work useful in your research, please consider citing:
 ```
 @inproceedings{HAWP,
 title = "Holistically-Attracted Wireframe Parsing",
-author = "Nan Xue and Tianfu Wu and Song Bai and Fu-Dong Wang 
-       and Gui-Song Xia and Liangpei Zhang and Philip H.S. Torr",
+author = "Nan Xue and Tianfu Wu and Song Bai and Fu-Dong Wang and Gui-Song Xia and Liangpei Zhang and Philip H.S. Torr
+",
 booktitle = "IEEE Conference on Computer Vision and Pattern Recognition (CVPR)",
 year = {2020},
 }
@@ -232,4 +242,3 @@ year = {2020},
 
 ## Acknowledgment
 We acknowledge the effort from the authors of the Wireframe dataset and the YorkUrban dataset. These datasets make accurate line segment detection and wireframe parsing possible.
-
