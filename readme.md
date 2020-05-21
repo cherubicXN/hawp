@@ -216,15 +216,10 @@ python setup.py build_ext --inplace
 python script/predict.py --config-file config-files/hawp.yaml --img figures/example.png
 ```
 
-<<<<<<< Updated upstream
 ## Training & Testing
 ### Data Preparation
 - Download the [Wireframe dataset](https://github.com/huangkuns/wireframe) and the [YorkUrban dataset](http://www.elderlab.yorku.ca/resources/york-urban-line-segment-database-information/) from their project pages.
 - Download the json-format annotations ([Google Drive]())
-=======
-## Training
-- Download the Wireframe dataset from (https://github.com/huangkuns/wireframe)
->>>>>>> Stashed changes
 
 ## Testing
 
