@@ -16,8 +16,7 @@ DATASETS:
     PIXEL_STD: [22.275, 22.124, 23.229]
     TO_255: True
 
-  VAL: ("wireframe_test",)
-  TEST: ("wireframe_test",)
+  TEST: ("wireframe_test","york_test")
 
 MODEL:
   NAME: "Hourglass"

@@ -1,15 +1,19 @@
 # Holistically-Attracted Wireframe Parsing (CVPR 2020)
 
-This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/2003.01663).
+This is the official implementation of our [CVPR paper](https://arxiv.org/pdf/2003.01663).
 
-[News] The pretrained model is released.
+~~[News] The pretrained model is released.~~~
+
+[News] The previous pretrained model is wrong, please download it again from  [Google Cloud](https://drive.google.com/file/d/1VP0M7O-6ng461y_VWznMFuqKw2efH-aD/view?usp=sharing).
+
+[News] The description of how to train and test our HAWP is updated. You may need to update the code if you cloned my repo before May 21, 2020.
 
 ## Highlights
 - We propose **a fast and parsimonious parsing method HAWP** to accurately and robustly detect a vectorized wireframe in an input image with a single forward pass. 
 - The proposed HAWP is **fully end-to-end**.
 - The proposed HAWP **does not require the squeeze module**.
 - **State-of-the-art performance** on the Wireframe dataset and YorkUrban dataset.
-- The proposed HAWP achievs **29.5 FPS** on a GPU (Tesla V100) for 1-batch inference.
+- The proposed HAWP achieves **29.5 FPS** on a GPU (Tesla V100) for 1-batch inference.
 
 <p align="center">
 <img src="figures/teaser.png" height="400" >
@@ -198,7 +202,7 @@ This is the offical implementation for our [CVPR paper](https://arxiv.org/pdf/20
 <p>
 
 ## Installation (tested on Ubuntu-18.04, CUDA 10.0, GCC 7.4.0)
-```
+```shell
 conda create -n hawp python=3.6
 conda install pytorch torchvision cudatoolkit=10.0 -c pytorch 
 
@@ -209,19 +213,48 @@ pip install -r requirement.txt
 python setup.py build_ext --inplace
 ```
 
-## Quickstart with the pretrained model ([Google Drive](https://drive.google.com/file/d/1IpDMdW5EwQROqJkULVxRcqNlk_sQpnJe/view?usp=sharing))
+## Quickstart with the pretrained model ([Google Drive](https://drive.google.com/file/d/1VP0M7O-6ng461y_VWznMFuqKw2efH-aD/view?usp=sharing))
 - Download the pretrained model and unzip the model to **"ROOT_DIR/outputs/hawp"**
 
-```
+```shell
 python script/predict.py --config-file config-files/hawp.yaml --img figures/example.png
 ```
 
 ## Training & Testing
 ### Data Preparation
 - Download the [Wireframe dataset](https://github.com/huangkuns/wireframe) and the [YorkUrban dataset](http://www.elderlab.yorku.ca/resources/york-urban-line-segment-database-information/) from their project pages.
-- Download the json-format annotations ([Google Drive]())
+- Download the JSON-format annotations ([Google Drive](https://drive.google.com/file/d/18totta2M57jqOuimusI041SlIvYDSmZb/view?usp=sharing)).
+- Place the images to "hawp/data/wireframe/images/" and "hawp/data/york/images/".
+- Unzip the json-format annotations to "hawp/data/wireframe" and "hawp/data/york".
 
-## Testing
+The structure of the data folder should be
+```shell
+data/
+   wireframe/images/*.png
+   wireframe/train.json
+   wireframe/test.json
+   ------------------------
+   york/images/*.png
+   york/test.json
+```
+### Training
+```shell
+CUDA_VISIBLE_DEVICES=0, python scripts/train.py --config-file config-files/hawp.yaml
+```
+The best model is manually selected from the model files after 25 epochs.
+### Testing
+```shell
+CUDA_VISIBLE_DEVICES=0, python scripts/test.py --config-file config-file/hawp.yaml [optional] --display
+```
+The output results will be saved to OUTPUT_DIR/$dataset_name.json. The dataset_name should be wireframe_test or york_test.
+
+### Structural-AP Evaluation
+- Run scripts/test.py to get the wireframe parsing results.
+- Run scripts/eval_sap.py to get the sAP results
+```shell
+# example on the Wireframe dataset
+python scripts/eval_sap.py --path outputs/hawp/wireframe_test.json --threshold 10
+```
 
 ## Citations
 If you find our work useful in your research, please consider citing:

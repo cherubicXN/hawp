@@ -4,7 +4,7 @@ import os.path as osp
 class DatasetCatalog(object):
 
     DATA_DIR = osp.abspath(osp.join(osp.dirname(__file__),
-                '..','data'))
+                '..','..','data'))
     
     DATASETS = {
         'wireframe_train': {
@@ -15,6 +15,10 @@ class DatasetCatalog(object):
             'img_dir': 'wireframe/images',
             'ann_file': 'wireframe/test.json',
         },
+        'york_test': {
+            'img_dir': 'york/images',
+            'ann_file': 'york/test.json',
+        }
     }
 
     @staticmethod
