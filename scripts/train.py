@@ -112,8 +112,9 @@ def train(cfg):
                     )
                 )
 
+
         checkpointer.save('model_{:05d}'.format(epoch))
-        scheduler.step(epoch)
+        scheduler.step()
     
     total_training_time = time.time() - start_training_time
     total_time_str = str(datetime.timedelta(seconds=total_training_time))
