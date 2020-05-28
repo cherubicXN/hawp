@@ -244,7 +244,7 @@ CUDA_VISIBLE_DEVICES=0, python scripts/train.py --config-file config-files/hawp.
 The best model is manually selected from the model files after 25 epochs.
 ### Testing
 ```shell
-CUDA_VISIBLE_DEVICES=0, python scripts/test.py --config-file config-file/hawp.yaml [optional] --display
+CUDA_VISIBLE_DEVICES=0, python scripts/test.py --config-file config-files/hawp.yaml [optional] --display
 ```
 The output results will be saved to OUTPUT_DIR/$dataset_name.json. The dataset_name should be wireframe_test or york_test.
 
