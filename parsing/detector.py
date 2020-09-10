@@ -32,13 +32,13 @@ def non_maximum_suppression(a):
     return a * mask
 
 def get_junctions(jloc, joff, topk = 300, th=0):
-    height, width = jloc.size(0), jloc.size(1)
+    height, width = jloc.size(1), jloc.size(2)
     jloc = jloc.reshape(-1)
     joff = joff.reshape(2, -1)
 
     scores, index = torch.topk(jloc, k=topk)
-    y = (index / 128).float() + torch.gather(joff[1], 0, index) + 0.5
-    x = (index % 128).float() + torch.gather(joff[0], 0, index) + 0.5
+    y = (index / width).float() + torch.gather(joff[1], 0, index) + 0.5
+    x = (index % width).float() + torch.gather(joff[0], 0, index) + 0.5
 
     junctions = torch.stack((x, y)).t()
 
@@ -114,7 +114,7 @@ class WireframeDetector(nn.Module):
             'time_matching': 0.0,
             'time_verification': 0.0,
         }
-        
+
         extra_info['time_backbone'] = time.time()
         outputs, features = self.backbone(images)
 
@@ -149,7 +149,7 @@ class WireframeDetector(nn.Module):
 
         idx_junc_to_end_min = torch.min(idx_junc_to_end1,idx_junc_to_end2)
         idx_junc_to_end_max = torch.max(idx_junc_to_end1,idx_junc_to_end2)
-       
+
         iskeep = (idx_junc_to_end_min < idx_junc_to_end_max)# * (dis_junc_to_end1< 10*10)*(dis_junc_to_end2<10*10)  # *(dis_junc_to_end2<100)
 
         idx_lines_for_junctions = torch.unique(
