@@ -3,3 +3,6 @@ outputs/*
 parsing/data/wireframe/images/*
 .vscode/*
 data/*
+
+**/*.pyc
+**/*.so

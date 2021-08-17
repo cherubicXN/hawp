@@ -8,6 +8,11 @@ import matplotlib.pyplot as plt
 import  numpy as np
 import time
 
+PRETRAINED = {
+    'url': 'https://github.com/cherubicXN/hawp/releases/download/0.1/model-hawp-hg-5d31f70.pth',
+    'md5': '5d31f70a6c2477ea7b24e7da96e7b97d',
+}
+
 def cross_entropy_loss_for_junction(logits, positive):
     nlogp = -F.log_softmax(logits, dim=1)
 
@@ -37,7 +42,7 @@ def get_junctions(jloc, joff, topk = 300, th=0):
     joff = joff.reshape(2, -1)
 
     scores, index = torch.topk(jloc, k=topk)
-    y = (index / width).float() + torch.gather(joff[1], 0, index) + 0.5
+    y = (index // width).float() + torch.gather(joff[1], 0, index) + 0.5
     x = (index % width).float() + torch.gather(joff[0], 0, index) + 0.5
 
     junctions = torch.stack((x, y)).t()
@@ -415,3 +420,20 @@ class WireframeDetector(nn.Module):
         # normals = torch.stack((cs_md,ss_md)).permute((1,2,0))
 
         return  lines#, normals
+
+def get_hawp_model(pretrained = False):
+    from parsing.config import cfg
+    import os
+    model = WireframeDetector(cfg)
+    if pretrained:
+        url = PRETRAINED.get('url')
+        hubdir = torch.hub.get_dir()
+        filename = os.path.basename(url)
+        dst = os.path.join(hubdir,filename)
+        state_dict = torch.hub.load_state_dict_from_url(url,dst)
+        model.load_state_dict(state_dict)
+        model = model.eval()
+        return model
+    return model
+
+        
