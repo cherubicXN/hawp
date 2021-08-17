@@ -1,31 +1,14 @@
 import torch
-import parsing
 from parsing.config import cfg
 from parsing.utils.comm import to_device
 from parsing.dataset.build import build_transform
-from parsing.detector import WireframeDetector
+from parsing.detector import get_hawp_model
 from parsing.utils.logger import setup_logger
-from parsing.utils.metric_logger import MetricLogger
-from parsing.utils.miscellaneous import save_config
-from parsing.utils.checkpoint import DetectronCheckpointer
 from skimage import io
-import os
-import os.path as osp
-import time
-import datetime
 import argparse
-import logging
 import matplotlib.pyplot as plt
-from tqdm import tqdm
-import json
-parser = argparse.ArgumentParser(description='HAWP Testing')
 
-parser.add_argument("--config-file",
-                    metavar="FILE",
-                    help="path to config file",
-                    type=str,
-                    required=True,
-                    )
+parser = argparse.ArgumentParser(description='HAWP Testing')
 
 parser.add_argument("--img",type=str,required=True,
                     help="image path")                    
@@ -36,10 +19,10 @@ parser.add_argument("--threshold",
 
 args = parser.parse_args()
 
+
 def test(cfg, impath):
-    logger = logging.getLogger("hawp.testing")
     device = cfg.MODEL.DEVICE
-    model = WireframeDetector(cfg)
+    model = get_hawp_model(pretrained=True)
     model = model.to(device)
 
     transform = build_transform(cfg)
@@ -51,14 +34,6 @@ def test(cfg, impath):
         'width': image.shape[1],
     }
     
-    checkpointer = DetectronCheckpointer(cfg,
-                                         model,
-                                         save_dir=cfg.OUTPUT_DIR,
-                                         save_to_disk=True,
-                                         logger=logger)
-    _ = checkpointer.load()
-    model = model.eval()
-
     with torch.no_grad():
         output, _ = model(image_tensor,[meta])
         output = to_device(output,'cpu')
@@ -80,15 +55,6 @@ def test(cfg, impath):
     plt.show()
     
 if __name__ == "__main__":
-
-    cfg.merge_from_file(args.config_file)
     cfg.freeze()
-    
-    output_dir = cfg.OUTPUT_DIR
-    logger = setup_logger('hawp', output_dir)
-    logger.info(args)
-    logger.info("Loaded configuration file {}".format(args.config_file))
-
-
     test(cfg,args.img)
 
