@@ -9,7 +9,7 @@ import  numpy as np
 import time
 
 PRETRAINED = {
-    'url': 'https://github.com/cherubicXN/hawp/releases/download/0.1/model-hawp-hg-5d31f70.pth',
+    'url': 'https://github.com/cherubicXN/hawp-torchhub/releases/download/0.1/model-hawp-hg-5d31f70.pth',
     'md5': '5d31f70a6c2477ea7b24e7da96e7b97d',
 }
 
