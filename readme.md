@@ -213,11 +213,10 @@ pip install -r requirement.txt
 python setup.py build_ext --inplace
 ```
 
-## Quickstart with the pretrained model ([Google Drive](https://drive.google.com/file/d/1VP0M7O-6ng461y_VWznMFuqKw2efH-aD/view?usp=sharing))
-- Download the pretrained model and unzip the model to **"ROOT_DIR/outputs/hawp"**
+## Quickstart with the pretrained model 
 
 ```shell
-python scripts/predict.py --config-file config-files/hawp.yaml --img figures/example.png
+python scripts/predict.py --img figures/example.png
 ```
 
 ## Training & Testing
