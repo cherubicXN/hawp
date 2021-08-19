@@ -10,7 +10,7 @@ import json
 
 def cli():
     parser = argparse.ArgumentParser(
-        prog='python3 -m hawp.predict',
+        prog='python -m hawp.predict',
         usage='%(prog)s [options] images',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
