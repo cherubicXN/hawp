@@ -2,7 +2,7 @@
 
 This is the official implementation of our [CVPR paper](https://arxiv.org/pdf/2003.01663).
 
-[**News**] We are refactoring our hawp as a python package for inference.
+[**News**] We are refactorizing our HAWP as a python package for inference. 
 
 ## Highlights
 - We propose **a fast and parsimonious parsing method HAWP** to accurately and robustly detect a vectorized wireframe in an input image with a single forward pass.
