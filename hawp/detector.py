@@ -1,10 +1,7 @@
 import torch
 from torch import nn
 from hawp.backbones import build_backbone
-from hawp.encoder.hafm import HAFMencoder
-# from epnet.structures.linelist_ops import linesegment_distance
 import torch.nn.functional as F
-import matplotlib.pyplot as plt
 import  numpy as np
 import time
 from .graph import WireframeGraph
@@ -13,24 +10,6 @@ PRETRAINED = {
     'url': 'https://github.com/cherubicXN/hawp-torchhub/releases/download/0.1/model-hawp-hg-5d31f70.pth',
     'md5': '5d31f70a6c2477ea7b24e7da96e7b97d',
 }
-
-def cross_entropy_loss_for_junction(logits, positive):
-    nlogp = -F.log_softmax(logits, dim=1)
-
-    loss = (positive * nlogp[:, None, 1] + (1 - positive) * nlogp[:, None, 0])
-
-    return loss.mean()
-
-def sigmoid_l1_loss(logits, targets, offset = 0.0, mask=None):
-    logp = torch.sigmoid(logits) + offset
-    loss = torch.abs(logp-targets)
-
-    if mask is not None:
-        w = mask.mean(3, True).mean(2,True)
-        w[w==0] = 1
-        loss = loss*(mask/w)
-
-    return loss.mean()
 
 def non_maximum_suppression(a):
     ap = F.max_pool2d(a, 3, stride=1, padding=1)
@@ -53,7 +32,7 @@ def get_junctions(jloc, joff, topk = 300, th=0):
 class WireframeDetector(nn.Module):
     def __init__(self, cfg):
         super(WireframeDetector, self).__init__()
-        self.hafm_encoder = HAFMencoder(cfg)
+        # self.hafm_encoder = HAFMencoder(cfg)
         self.backbone = build_backbone(cfg)
 
         self.n_dyn_junc = cfg.MODEL.PARSING_HEAD.N_DYN_JUNC
@@ -106,12 +85,6 @@ class WireframeDetector(nn.Module):
         return logits
 
     def forward(self, images, annotations = None):
-        if self.training:
-            return self.forward_train(images, annotations=annotations)
-        else:
-            return self.forward_test(images, annotations=annotations)
-
-    def forward_test(self, images, annotations = None):
         device = images.device
 
         extra_info = {
@@ -189,128 +162,6 @@ class WireframeDetector(nn.Module):
         extra_info['time_verification'] = time.time() - extra_info['time_verification']
 
         return wireframe, extra_info
-    def forward_train(self, images, annotations = None):
-        device = images.device
-
-        targets , metas = self.hafm_encoder(annotations)
-
-        self.train_step += 1
-
-        outputs, features = self.backbone(images)
-
-        loss_dict = {
-            'loss_md': 0.0,
-            'loss_dis': 0.0,
-            'loss_res': 0.0,
-            'loss_jloc': 0.0,
-            'loss_joff': 0.0,
-            'loss_pos': 0.0,
-            'loss_neg': 0.0,
-        }
-
-
-        mask = targets['mask']
-        if targets is not None:
-            for nstack, output in enumerate(outputs):
-                loss_map = torch.mean(F.l1_loss(output[:,:3].sigmoid(), targets['md'],reduction='none'),dim=1,keepdim=True)
-                loss_dict['loss_md']  += torch.mean(loss_map*mask) / torch.mean(mask)
-                loss_map = F.l1_loss(output[:,3:4].sigmoid(), targets['dis'], reduction='none')
-                loss_dict['loss_dis'] += torch.mean(loss_map*mask) /torch.mean(mask)
-                loss_residual_map = F.l1_loss(output[:,4:5].sigmoid(), loss_map, reduction='none')
-                loss_dict['loss_res'] += torch.mean(loss_residual_map*mask)/torch.mean(mask)
-                loss_dict['loss_jloc'] += cross_entropy_loss_for_junction(output[:,5:7], targets['jloc'])
-                loss_dict['loss_joff'] += sigmoid_l1_loss(output[:,7:9], targets['joff'], -0.5, targets['jloc'])
-
-        loi_features = self.fc1(features)
-        output = outputs[0]
-        md_pred = output[:,:3].sigmoid()
-        dis_pred = output[:,3:4].sigmoid()
-        res_pred = output[:,4:5].sigmoid()
-        jloc_pred= output[:,5:7].softmax(1)[:,1:]
-        joff_pred= output[:,7:9].sigmoid() - 0.5
-
-        lines_batch = []
-        extra_info = {
-        }
-
-        batch_size = md_pred.size(0)
-
-        for i, (md_pred_per_im, dis_pred_per_im,res_pred_per_im,meta) in enumerate(zip(md_pred, dis_pred,res_pred,metas)):
-            lines_pred = []
-            if self.use_residual:
-                for scale in [-1.0,0.0,1.0]:
-                    _ = self.proposal_lines(md_pred_per_im, dis_pred_per_im+scale*res_pred_per_im).view(-1, 4)
-                    lines_pred.append(_)
-            else:
-                lines_pred.append(self.proposal_lines(md_pred_per_im, dis_pred_per_im).view(-1, 4))
-            lines_pred = torch.cat(lines_pred)
-            junction_gt = meta['junc']
-            N = junction_gt.size(0)
-
-            juncs_pred, _ = get_junctions(non_maximum_suppression(jloc_pred[i]),joff_pred[i], topk=min(N*2+2,self.n_dyn_junc))
-            dis_junc_to_end1, idx_junc_to_end1 = torch.sum((lines_pred[:,:2]-juncs_pred[:,None])**2,dim=-1).min(0)
-            dis_junc_to_end2, idx_junc_to_end2 = torch.sum((lines_pred[:, 2:] - juncs_pred[:, None]) ** 2, dim=-1).min(0)
-
-            idx_junc_to_end_min = torch.min(idx_junc_to_end1,idx_junc_to_end2)
-            idx_junc_to_end_max = torch.max(idx_junc_to_end1,idx_junc_to_end2)
-            iskeep = idx_junc_to_end_min<idx_junc_to_end_max
-            idx_lines_for_junctions = torch.cat((idx_junc_to_end_min[iskeep,None],idx_junc_to_end_max[iskeep,None]),dim=1).unique(dim=0)
-            idx_lines_for_junctions_mirror = torch.cat((idx_lines_for_junctions[:,1,None],idx_lines_for_junctions[:,0,None]),dim=1)
-            idx_lines_for_junctions = torch.cat((idx_lines_for_junctions, idx_lines_for_junctions_mirror))
-            lines_adjusted = torch.cat((juncs_pred[idx_lines_for_junctions[:,0]], juncs_pred[idx_lines_for_junctions[:,1]]),dim=1)
-
-            cost_, match_ = torch.sum((juncs_pred-junction_gt[:,None])**2,dim=-1).min(0)
-            match_[cost_>1.5*1.5] = N
-            Lpos = meta['Lpos']
-            Lneg = meta['Lneg']
-            labels = Lpos[match_[idx_lines_for_junctions[:,0]],match_[idx_lines_for_junctions[:,1]]]
-
-            iskeep = torch.zeros_like(labels, dtype= torch.bool)
-            cdx = labels.nonzero().flatten()
-
-            if len(cdx) > self.n_dyn_posl:
-                perm = torch.randperm(len(cdx),device=device)[:self.n_dyn_posl]
-                cdx = cdx[perm]
-
-            iskeep[cdx] = 1
-
-            if self.n_dyn_negl > 0:
-                cdx = Lneg[match_[idx_lines_for_junctions[:,0]],match_[idx_lines_for_junctions[:,1]]].nonzero().flatten()
-
-                if len(cdx) > self.n_dyn_negl:
-                    perm = torch.randperm(len(cdx), device=device)[:self.n_dyn_negl]
-                    cdx = cdx[perm]
-
-                iskeep[cdx] = 1
-
-            if self.n_dyn_othr > 0:
-                cdx = torch.randint(len(iskeep), (self.n_dyn_othr,), device=device)
-                iskeep[cdx] = 1
-
-            if self.n_dyn_othr2 >0 :
-                cdx = (labels==0).nonzero().flatten()
-                if len(cdx) > self.n_dyn_othr2:
-                    perm = torch.randperm(len(cdx), device=device)[:self.n_dyn_othr2]
-                    cdx = cdx[perm]
-                iskeep[cdx] = 1
-
-            lines_selected = lines_adjusted[iskeep]
-            labels_selected = labels[iskeep]
-
-            lines_for_train = torch.cat((lines_selected,meta['lpre']))
-            labels_for_train = torch.cat((labels_selected.float(),meta['lpre_label']))
-
-            logits = self.pooling(loi_features[i],lines_for_train)
-
-            loss_ = self.loss(logits, labels_for_train)
-
-            loss_positive = loss_[labels_for_train==1].mean()
-            loss_negative = loss_[labels_for_train==0].mean()
-
-            loss_dict['loss_pos'] += loss_positive/batch_size
-            loss_dict['loss_neg'] += loss_negative/batch_size
-
-        return loss_dict, extra_info
 
     def proposal_lines(self, md_maps, dis_maps, scale=5.0):
         """
