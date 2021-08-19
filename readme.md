@@ -2,11 +2,7 @@
 
 This is the official implementation of our [CVPR paper](https://arxiv.org/pdf/2003.01663).
 
-<del> [News] The pretrained model is released.</del>
-
-[**News**] The previous pretrained model is wrong, please download it again from  [Google Cloud](https://drive.google.com/file/d/1VP0M7O-6ng461y_VWznMFuqKw2efH-aD/view?usp=sharing).
-
-[**News**] The description of how to train and test our HAWP is updated. You may need to update the code if you cloned my repo before May 21, 2020.
+[**News**] We are refactoring our hawp as a python package for inference.
 
 ## Highlights
 - We propose **a fast and parsimonious parsing method HAWP** to accurately and robustly detect a vectorized wireframe in an input image with a single forward pass.
