@@ -17,7 +17,6 @@ else:
 
 
 if __name__ == '__main__':
-    install_requires = ["yacs", ]
 
     setup(
         name="hawp",
