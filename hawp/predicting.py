@@ -60,6 +60,11 @@ class WireframeParser(object):
         data = dataset.test_dataset.ImageList(
             file_names, transform=self.preprocessor_transform, with_raw_image=True)
         yield from self.dataset(data, **kwargs)
+    
+    def numpy_images(self, numpy_images, **kwargs):
+        data = dataset.test_dataset.NumpyImageList(
+            numpy_images, transform=self.preprocessor_transform, with_raw_image=True)
+        yield from self.dataset(data, **kwargs)
 
 
 

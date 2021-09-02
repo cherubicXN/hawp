@@ -84,4 +84,27 @@ class ImageList(Dataset):
             return image, processed_image, anns, meta
         return processed_image, anns, meta
 
+
+class NumpyImageList(Dataset):
+    def __init__(self, images, transform=None, with_raw_image=False):
+        super().__init__()
+        self.images = images
+        self.transform = transform
+        self.with_raw_image = with_raw_image
+    def __len__(self):
+        return len(self.image_paths)
+    def __getitem__(self, index):
+        image = Image.fromarray(self.images[index])
+        anns = {}
+        meta = {
+            'dataset_index': index,
+            'filename': '{:09d}'.format(index),
+            'height': image.shape[0],
+            'width': image.shape[1],
+        }
+        processed_image, anns = self.transform(image.astype(float)[:,:,:3],anns)
+        if self.with_raw_image:
+            return image, processed_image, anns, meta
+        return processed_image, anns, meta
+
         
