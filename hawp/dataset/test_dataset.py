@@ -92,7 +92,7 @@ class NumpyImageList(Dataset):
         self.transform = transform
         self.with_raw_image = with_raw_image
     def __len__(self):
-        return len(self.image_paths)
+        return len(self.images)
     def __getitem__(self, index):
         image = Image.fromarray(self.images[index])
         anns = {}
