@@ -1,21 +1,25 @@
-import glob
-import os
-
-import torch
-from setuptools import find_packages
-from setuptools import setup
-from torch.utils.cpp_extension import CUDA_HOME
-from torch.utils.cpp_extension import CppExtension
-from torch.utils.cpp_extension import CUDAExtension
+import subprocess
+import os,sys
+from setuptools import setup,find_packages
 
 requirements = ["torch", "torchvision"]
 
+if __name__ == '__main__':
 
-setup(
-    name="hawp",
-    version="0.1.1",
-    author="Nan Xue",
-    description="holistically-attracted wireframe parsing (in pytorch)",
-    packages=find_packages(),
-    cmdclass={"build_ext": torch.utils.cpp_extension.BuildExtension},
-)
+    setup(
+        name="hawp",
+        version="0.1.1",
+        author="Nan Xue",
+        description="Holistically-Attracted Wireframe Parsing (in pytorch)",
+        packages=find_packages(),
+        python_requires='>=3.6',
+        install_requires = [
+            "yacs", 
+            "opencv-python",
+            "matplotlib",
+            "scikit-image",
+            "tqdm",
+            "torch",
+            "torchvision",
+        ]
+    )

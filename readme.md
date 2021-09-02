@@ -17,10 +17,41 @@
 1. Install PyTorch from https://pytorch.org/get-started/locally/
 2. Install hawp to your python environment by
 ```
-cd hawp
-pip install .
+pip install git+https://github.com/cherubicXN/hawp.git@inference
 ```
 
+## Usage
+```
+python -m hawp.predict [options] images
+```
+## Help
+```
+python -m hawp.predict --help
+usage: python -m hawp.predict [options] images
+
+positional arguments:
+  images                input images (default: None)
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --glob GLOB           glob expression for input images (for many images)
+                        (default: None)
+  -o [IMAGE_OUTPUT], --image-output [IMAGE_OUTPUT]
+                        Whether to output an image, with the option to specify
+                        the output path or directory (default: None)
+  --json-output [JSON_OUTPUT]
+                        Whether to output a json file, with the option to
+                        specify the output path or directory (default: None)
+  --disable-cuda        disable CUDA (default: False)
+
+show:
+  --show                show every plot, i.e., call matplotlib show()
+                        (default: False)
+  --edge-threshold EDGE_THRESHOLD
+                        show the wireframe edges whose confidences are greater
+                        than [edge_threshold] (default: None)
+  --out-ext OUT_EXT     save the plot in specific format (default: png)
+```
 ## Citations
 If you find our work useful in your research, please consider citing:
 ```
