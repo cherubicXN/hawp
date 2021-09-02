@@ -94,7 +94,7 @@ class NumpyImageList(Dataset):
     def __len__(self):
         return len(self.images)
     def __getitem__(self, index):
-        image = Image.fromarray(self.images[index])
+        image = self.images[index]
         anns = {}
         meta = {
             'dataset_index': index,
