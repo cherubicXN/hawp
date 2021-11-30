@@ -25,7 +25,7 @@ parser.add_argument("--config-file",
                     type=str,
                     default=None,
                     )
-
+parser.add_argument("--epoch",type=int,default=None)
 parser.add_argument("--display",
                     default=False,
                     action='store_true')
@@ -52,7 +52,10 @@ def test(cfg):
                                          save_dir=cfg.OUTPUT_DIR,
                                          save_to_disk=True,
                                          logger=logger)
-        _ = checkpointer.load()
+        if args.epoch is not None:
+            _ = checkpointer.load(os.path.join(output_dir,'model_{:05d}.pth'.format(args.epoch)),use_latest=False)
+        else:
+            _ = checkpointer.load()
         model = model.eval()
 
     for name, dataset in test_datasets:
