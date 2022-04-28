@@ -94,7 +94,7 @@ class WireframeDetector(nn.Module):
         py1 = (py0 + 1).clamp(min=0, max=h-1)
         px0l, py0l, px1l, py1l = px0.long(), py0.long(), px1.long(), py1.long()
 
-        xp = ((features_per_image[:, py0l, px0l] * (py1-py) * (px1 - px)+ features_per_image[:, py1l, px0l] * (py - py0) * (px1 - px)+ features_per_image[:, py0l, px1l] * (py1 - py) * (px - px0)+ features_per_image[:, py1l, px1l] * (py - py0) * (px - px0)).reshape(128,-1,32)
+        xp = ((features_per_image[:, py0l, px0l] * (py1-py) * (px1 - px)+ features_per_image[:, py1l, px0l] * (py - py0) * (px1 - px)+ features_per_image[:, py0l, px1l] * (py1 - py) * (px - px0)+ features_per_image[:, py1l, px1l] * (py - py0) * (px - px0)).reshape(self.dim_loi,-1,self.n_pts0)
         ).permute(1,0,2)
 
 
