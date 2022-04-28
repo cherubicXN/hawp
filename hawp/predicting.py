@@ -50,6 +50,7 @@ class WireframeParser(object):
             if self.visualize_image:
                 visualizer.Base.image(image_batch[0])
             processed_image_batch = processed_image_batch.to(self.device)
+
             with torch.no_grad():
                 wireframe, _ = self.model(processed_image_batch, meta_batch)
 

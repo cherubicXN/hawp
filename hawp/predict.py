@@ -67,7 +67,10 @@ if __name__ == "__main__":
 
     args = cli()
 
+    if args.disable_cuda:
+        predicting.WireframeParser.device = 'cpu'
     wireframe_parser = predicting.WireframeParser(visualize_image = True)
+    
     wireframe_painter = show.painters.WireframePainter()
     
     progress_bar = tqdm(total=len(args.images))

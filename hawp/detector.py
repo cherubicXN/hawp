@@ -48,7 +48,7 @@ class WireframeDetector(nn.Module):
         self.n_out_line = cfg.MODEL.PARSING_HEAD.N_OUT_LINE
         self.use_residual = cfg.MODEL.PARSING_HEAD.USE_RESIDUAL
         # self.
-        self.register_buffer('tspan', torch.linspace(0, 1, self.n_pts0)[None,None,:].cuda())
+        self.register_buffer('tspan', torch.linspace(0, 1, self.n_pts0)[None,None,:])
         self.loss = nn.BCEWithLogitsLoss(reduction='none')
 
         self.fc1 = nn.Conv2d(256, self.dim_loi, 1)
@@ -272,7 +272,7 @@ def get_hawp_model(pretrained = False):
         hubdir = torch.hub.get_dir()
         filename = os.path.basename(url)
         dst = os.path.join(hubdir,filename)
-        state_dict = torch.hub.load_state_dict_from_url(url,dst)
+        state_dict = torch.hub.load_state_dict_from_url(url,dst,map_location='cpu')
         model.load_state_dict(state_dict)
         model = model.eval()
         return model
