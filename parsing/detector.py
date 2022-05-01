@@ -71,7 +71,7 @@ class WireframeDetector(nn.Module):
         self.register_buffer('tspan', torch.linspace(0, 1, self.n_pts0)[None,None,:].cuda())
         self.loss = nn.BCEWithLogitsLoss(reduction='none')
 
-        self.fc1 = nn.Conv2d(256, self.dim_loi, 1)
+        self.fc1 = nn.Conv2d(cfg.MODEL.OUT_FEATURE_CHANNELS, self.dim_loi, 1)
         self.pool1d = nn.MaxPool1d(self.n_pts0//self.n_pts1, self.n_pts0//self.n_pts1)
         self.fc2 = nn.Sequential(
             nn.Linear(self.dim_loi * self.n_pts1, self.dim_fc),
