@@ -1,0 +1,2 @@
+python -m evaluation.eval-json --pred  precomputed-results/benchmark/FClip-HG2-LB-wireframe.json --benchmark wireframe --label "F-Clip-HG2-LB" --nthreads=8 --thresholds 0.1 0.2 0.25 0.27 0.3 0.315 0.33 0.345 0.36 0.38 0.4 0.42 0.45 0.47 0.49 0.5 0.52 0.54 0.56 0.58
+python -m evaluation.eval-json --pred  precomputed-results/benchmark/FClip-HG2-LB-york.json --benchmark york --label "F-Clip-HG2-LB" --nthreads=8 --thresholds 0.1 0.2 0.25 0.27 0.3 0.315 0.33 0.345 0.36 0.38 0.4 0.42 0.45 0.47 0.49 0.5 0.52 0.54 0.56 0.58
