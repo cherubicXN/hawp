@@ -47,6 +47,7 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
     <img src="docs/figures/dtu-24/000005.png" width="200">
     <img src="docs/figures/dtu-24/000009.png" width="200">
     <img src="docs/figures/dtu-24/000015.png" width="200">
+    <img src="docs/figures/dtu-24/000045.png" width="200">
     </p>
    
 ## Data Downloading
