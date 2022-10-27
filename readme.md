@@ -102,6 +102,7 @@ We also provide a [Dockerfile](docker/Dockerfile). You could build the docker im
 sudo docker build - < Dockerfile --tag hawp:latest
 ```
 </details>
+
 ## Citations
 If you find our work useful in your research, please consider citing:
 ```
