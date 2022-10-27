@@ -8,7 +8,7 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
 ## Highlights
 
 - **HAT Fields**: A General and Robust Representation of Line Segments for Wireframe Parsing
-- **HAWPv2**: A state-of-the-art fully-supervised wireframe parser, please checkout [HAWPv2.md](docs/HAWPv2.md) for its details.
+- **HAWPv2**: A state-of-the-art fully-supervised wireframe parser. Please checkout [HAWPv2.md](docs/HAWPv2.md) for its details.
 - **HAWPv3**: A state-of-the-art self-supervised wireframe parser. Please checkout [HAWPv3.md](docs/HAWPv3.md) for its details. HAWPv3 can be used as a good wireframe parser for the out-of-distribution images.
   
 <p align="center">
