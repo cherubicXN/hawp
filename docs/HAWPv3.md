@@ -3,7 +3,7 @@
 *The codes of HAWPv2 are placed in the directory of [hawp/fsl](../hawp/fsl).*
 
 |Model Name|Comments|MD5|
-|---|---|---|---|
+|---|---|---|
 |[hawpv3-fdc5487a.pth](https://github.com/cherubicXN/hawp-torchhub/releases/download/HAWPv3/hawpv3-fdc5487a.pth)| Trained on the images of Wireframe dataset | fdc5487a43e3d42f6b2addf79d8b930d
 |[hawpv3-imagenet-03a84.pth](https://github.com/cherubicXN/hawp-torchhub/releases/download/HAWPv3/hawpv3-imagenet-03a84.pth)| Trained on 100k images of ImageNet dataset| 03a8400e9474320f2b42973d1ba19487|
 
