@@ -1,4 +1,4 @@
-# HAWPv2
+# HAWPv2:  Learning Wireframes via Fully-Supervised Learning
 
 *The codes of HAWPv2 are placed in the directory of [hawp/fsl](../hawp/fsl).*
 ## Quickstart & Evaluation
