@@ -49,7 +49,6 @@
     --logdir LOGDIR
     --resume RESUME
     --clean
-    --eval-off
     --seed SEED
     --tf32              toggle on the TF32 of pytorch
     --dtm {True,False}  toggle the deterministic option of CUDNN. This option will affect the replication of experiments
