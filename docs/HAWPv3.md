@@ -1,29 +1,50 @@
 # HAWPv3: Learning Wireframes via Self-Supervised Learning
 
-|Model Name|Checkpoint|MD5|
-|---|---|---|
-|imagenet-small| [url](https://hawp-models.s3.us-east-2.amazonaws.com/hawpv3-models/imagenet-train-small.zip)   | 03a8400e9474320f2b42973d1ba19487|
+*The codes of HAWPv2 are placed in the directory of [hawp/fsl](../hawp/fsl).*
 
+|Model Name|Comments|MD5|
+|---|---|---|---|
+|[hawpv3-fdc5487a.pth](https://github.com/cherubicXN/hawp-torchhub/releases/download/HAWPv3/hawpv3-fdc5487a.pth)| Trained on the images of Wireframe dataset | fdc5487a43e3d42f6b2addf79d8b930d
+|[hawpv3-imagenet-03a84.pth](https://github.com/cherubicXN/hawp-torchhub/releases/download/HAWPv3/hawpv3-imagenet-03a84.pth)| Trained on 100k images of ImageNet dataset| 03a8400e9474320f2b42973d1ba19487|
 
-## Quickstart
-### 1. Download Checkpoints
-- Go to the project directory of HAWP (e.g., in my own machine, it is ``/home/xn/repo/hawp-private
-``)
-- Create a directory to save the checkpoints (e.g., in my own machine, I created a folder named ``hawpv3-models``. The absolute directory should be ``/home/xn/repo/hawp-private/hawpv3-models``)
-- Download the checkpoint from the url listed in the top table. For example, you can run the following command lines to download the model [imagenet-small](https://hawp-models.s3.us-east-2.amazonaws.com/hawpv3-models/imagenet-train-small.zip):
+### Inference on your own images
 
-```shell
-#E.g., Working dir is /home/xn/repo/hawp-private
-cd hawpv3-models # or your favorite directory
-wget https://hawp-models.s3.us-east-2.amazonaws.com/hawpv3-models/imagenet-train-small.zip 
-unzip imagenet-train-small.zip
-cd ..
-```
+- Run the following command line to obtain wireframes from HAWPv3 model
+    <details>
+        <summary><b>hawpv3-fdc5487a.pth</b></summary>
+        ```bash
+        python -m hawp.ssl.predict --ckpt checkpoints/hawpv3-fdc5487a.pth \
+            --threshold 0.05 \
+            --img {filename.png}
+        ```
+    </details>
 
-### 2. Inference on your own images
-```python
-python -m sslib.predict --modelcfg hawpv3-models/imagenet-train-small/model.yaml \
-    --ckpt hawpv3-models/imagenet-train-small/model-final.pth \
-    --img {filename.png} -t=0.5
-```
+    <details>
+    <summary><b>hawpv3-imagenet-03a84.pth</b></summary>
+        ```bash
+        python -m hawp.ssl.predict --ckpt checkpoints/hawpv3-imagenet-03a84.pth \
+            --threshold 0.05 \
+            --img {filename.png}
+        ```
+    </details>
 
+- A running example on the DTU-24 images
+  ```bash
+  python -m hawp.ssl.predict --ckpt checkpoints/hawpv3-imagenet-03a84.pth  \
+    --threshold 0.05  \
+    --img ~/datasets/DTU/scan24/image/*.png \ 
+    --saveto docs/figures/dtu-24 --ext png \
+  ```
+    <p align="center">
+    <!-- <img src="figures/teaser.png" height="400" >
+    -->
+    <img src="figures/dtu-24/000000.png" width="200">
+    <img src="figures/dtu-24/000001.png" width="200">
+    <img src="figures/dtu-24/000002.png" width="200">
+    <img src="figures/dtu-24/000003.png" width="200">
+    <img src="figures/dtu-24/000004.png" width="200">
+    <img src="figures/dtu-24/000005.png" width="200">
+    <img src="figures/dtu-24/000009.png" width="200">
+    <img src="figures/dtu-24/000015.png" width="200">
+    </p>
+   

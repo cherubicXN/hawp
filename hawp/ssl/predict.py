@@ -44,6 +44,7 @@ def parse_args():
     aparser.add_argument('--height', default=512,type=int)
     aparser.add_argument('--whitebg', default=0.0, type=float)
     aparser.add_argument('--saveto', default=None, type=str,)
+    aparser.add_argument('--ext', default='pdf', type=str, choices=['pdf','png'])
 
     args = aparser.parse_args()
 
@@ -70,7 +71,7 @@ def main():
     if args.saveto:
         os.makedirs(args.saveto,exist_ok=True)
         DEST = args.saveto
-
+        
     for fname in tqdm(args.img):
         image = cv2.imread(fname,0)
         ori_shape = image.shape[:2]
@@ -114,8 +115,8 @@ def main():
         plt.axis('off')
 
         if args.saveto:
-            print(osp.join(DEST,osp.basename(fname[:-4])+'.pdf'),(scores_pred>th).sum())
-            plt.savefig(osp.join(DEST,osp.basename(fname[:-4])+'.pdf'),dpi=300,bbox_inches=0)
+            print(osp.join(DEST,osp.basename(fname[:-4])+'.'+args.ext),(scores_pred>th).sum())
+            plt.savefig(osp.join(DEST,osp.basename(fname[:-4])+'.'+args.ext),dpi=300,bbox_inches=0)
             plt.close()
         else:
             plt.show()
