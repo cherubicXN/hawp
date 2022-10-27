@@ -30,6 +30,11 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
 <p>
 
 ## Data Downloading
+<details>
+<summary>
+<b>Training and Testing datasets for HAWPv2</b>
+</summary>
+
 - The training and testing data (including [Wireframe dataset](https://github.com/huangkuns/wireframe) and [YorkUrban dataset](http://www.elderlab.yorku.ca/resources/york-urban-line-segment-database-information/)) for **HAWPv2** can be downloaded via [Google Drive](https://drive.google.com/file/d/134L-u9pgGtnzw0auPv8ykHqMjjZ2claO/view?usp=sharing). *Many thanks to authors of these two excellent datasets!* 
 
 - You can also use the [gdown](https://pypi.org/project/gdown/) to download the data in the terminal by
@@ -37,8 +42,7 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
   gdown 134L-u9pgGtnzw0auPv8ykHqMjjZ2claO
   unzip data.zip
   ```
-## Checkpoints Downloading
-- 
+</details>
 ## Installation 
 ### Anaconda
 <details>
@@ -62,12 +66,9 @@ pip install -r requirements.txt
 ```bash
 python -c "import torch; print(torch.cuda.is_available())" # Check if the installed pytorch supports CUDA.
 ```
-- Downloading the Checkpoint and then **run the evaluation** of HAWPv2
+- Downloading the offically-trained checkpoints of both **HAWPv2** and **HAWPv3**.
 ```bash
-wget https://github.com/cherubicXN/hawp-torchhub/releases/download/HAWPv2/hawpv2-edb9b23f.pth -P checkpoints
-python -m hawp.fsl.benchmark configs/hawpv2.yaml \
-    --ckpt checkpoints/hawpv2-edb9b23f.pth \
-    --dataset wireframe
+sh downloads.sh
 ```
 </details>
 
