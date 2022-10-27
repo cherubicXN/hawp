@@ -66,8 +66,8 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
 </details>
 
 ## Installation 
-### Anaconda
 <details>
+<summary><b>Anaconda</b></summary>
 
 - Clone the code repo: ``git clone https://github.com/cherubicXN/hawp.git``.
 - Install ninja-build by ``sudo apt install ninja-build``.
@@ -94,11 +94,14 @@ sh downloads.sh
 ```
 </details>
 
-### Docker
+<details>
+<summary><b>Docker</b></summary>
+
 We also provide a [Dockerfile](docker/Dockerfile). You could build the docker image by running the following command lines.
 ```bash
 sudo docker build - < Dockerfile --tag hawp:latest
 ```
+</details>
 ## Citations
 If you find our work useful in your research, please consider citing:
 ```
