@@ -29,7 +29,30 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
  <img src="docs/figures/v3-CrowdAI/000000000230.png" width="200">
 <p>
 
+## Installation 
+### Anaconda or Python
 
+- Clone the code repo: ``git clone https://github.com/cherubicXN/hawp.git``.
+- Create a conda environment by
+```bash
+conda create -n hawp python==3.9
+conda activate hawp
+conda develop .
+```
+- Run the following command lines to install the dependencies of HAWP
+```bash
+# Install pytorch, please be careful for the version of CUDA on your machine
+pip install torch==1.12.0+cu116 torchvision==0.13.0+cu116 torchaudio==0.12.0 --extra-index-url https://download.pytorch.org/whl/cu116 
+# Install other dependencies
+pip install -r requirements.txt
+```
+- Verify the installation.
+```bash
+python -c "import torch; print(torch.cuda.is_available())" # Check if the installed pytorch supports CUDA.
+```
+</details>
+
+### Docker
 ## Citations
 If you find our work useful in your research, please consider citing:
 ```
