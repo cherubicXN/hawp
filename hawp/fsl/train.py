@@ -18,13 +18,11 @@ from hawp.base.utils.miscellaneous import save_config
 from hawp.base.utils.checkpoint import DetectronCheckpointer
 from hawp.base.utils.metric_evaluation import TPFP, AP
 
-
-import hawp.fsl as fsl
-from fsl.dataset import build_train_dataset
-from fsl.config import cfg
-from fsl.config.paths_catalog import DatasetCatalog
-from fsl.model.build import build_model
-from fsl.solver import make_lr_scheduler, make_optimizer
+from hawp.fsl.dataset import build_train_dataset
+from hawp.fsl.config import cfg
+from hawp.fsl.config.paths_catalog import DatasetCatalog
+from hawp.fsl.model.build import build_model
+from hawp.fsl.solver import make_lr_scheduler, make_optimizer
 
 AVAILABLE_DATASETS = ('wireframe_test', 'york_test')
 
@@ -192,7 +190,6 @@ if __name__ == "__main__":
     parser.add_argument("--clean",
                         default=False,
                         action='store_true')
-    parser.add_argument('--eval-off',default=False, action='store_true')
     parser.add_argument("--seed",
                         default=42,
                         type=int)
