@@ -29,10 +29,22 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
  <img src="docs/figures/v3-CrowdAI/000000000230.png" width="200">
 <p>
 
+## Data Downloading
+- The training and testing data (including [Wireframe dataset](https://github.com/huangkuns/wireframe) and [YorkUrban dataset](http://www.elderlab.yorku.ca/resources/york-urban-line-segment-database-information/)) for **HAWPv2** can be downloaded via [Google Drive](https://drive.google.com/file/d/134L-u9pgGtnzw0auPv8ykHqMjjZ2claO/view?usp=sharing). *Many thanks to authors of these two excellent datasets!* 
+
+- You can also use the [gdown](https://pypi.org/project/gdown/) to download the data in the terminal by
+  ```bash
+  gdown 134L-u9pgGtnzw0auPv8ykHqMjjZ2claO
+  unzip data.zip
+  ```
+
+- ...
+### HAWPv3 (Self-Supervised Learning)
 ## Installation 
 ### Anaconda or Python
 
 - Clone the code repo: ``git clone https://github.com/cherubicXN/hawp.git``.
+- Install ninja-build by ``sudo apt install ninja-build``.
 - Create a conda environment by
 ```bash
 conda create -n hawp python==3.9
@@ -49,6 +61,13 @@ pip install -r requirements.txt
 - Verify the installation.
 ```bash
 python -c "import torch; print(torch.cuda.is_available())" # Check if the installed pytorch supports CUDA.
+```
+- Downloading the Checkpoint and then **run the evaluation** of HAWPv2
+```bash
+wget https://github.com/cherubicXN/hawp-torchhub/releases/download/HAWPv2/hawpv2-edb9b23f.pth -P checkpoints
+python -m hawp.fsl.benchmark configs/hawpv2.yaml \
+    --ckpt checkpoints/hawpv2-edb9b23f.pth \
+    --dataset wireframe
 ```
 </details>
 
