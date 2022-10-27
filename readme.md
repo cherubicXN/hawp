@@ -14,22 +14,22 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
 <p align="center">
 <!-- <img src="figures/teaser.png" height="400" >
  -->
- <img src="docs/figures/v3-wireframe/00037187.png" width="200">
- <img src="docs/figures/v3-wireframe/00051510.png" width="200">
- <img src="docs/figures/v3-wireframe/00074259.png" width="200">
+ <img src="docs/figures/v3-wireframe/00037187.png" width="30%">
+ <img src="docs/figures/v3-wireframe/00051510.png" width="30%">
+ <img src="docs/figures/v3-wireframe/00074259.png" width="30%">
 </p>
 <p align="center">
- <img src="docs/figures/v3-BSDS/37073.png" width="200">
- <img src="docs/figures/v3-BSDS/42049.png" width="200">
- <img src="docs/figures/v3-BSDS/85048.png" width="200">
+ <img src="docs/figures/v3-BSDS/37073.png" width="30%">
+ <img src="docs/figures/v3-BSDS/42049.png" width="30%">
+ <img src="docs/figures/v3-BSDS/85048.png" width="30%">
 </p>
 <p align="center">
- <img src="docs/figures/v3-CrowdAI/000000000190.png" width="200">
- <img src="docs/figures/v3-CrowdAI/000000000210.png" width="200">
- <img src="docs/figures/v3-CrowdAI/000000000230.png" width="200">
+ <img src="docs/figures/v3-CrowdAI/000000000190.png" width="30%">
+ <img src="docs/figures/v3-CrowdAI/000000000210.png" width="30%">
+ <img src="docs/figures/v3-CrowdAI/000000000230.png" width="30%">
 <p>
 
-- **A running example on the DTU-24 images**
+- **We provide a running example on the images of [DTU dataset](https://roboimagedata.compute.dtu.dk/?page_id=36) (scene24) as below.**
   ```bash
   python -m hawp.ssl.predict --ckpt checkpoints/hawpv3-imagenet-03a84.pth  \
     --threshold 0.05  \
@@ -37,17 +37,19 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
     --saveto docs/figures/dtu-24 --ext png \
   ```
     <p align="center">
-    <!-- <img src="figures/teaser.png" height="400" >
-    -->
-    <img src="docs/figures/dtu-24/000000.png" width="200">
-    <img src="docs/figures/dtu-24/000001.png" width="200">
-    <img src="docs/figures/dtu-24/000002.png" width="200">
-    <img src="docs/figures/dtu-24/000003.png" width="200">
-    <img src="docs/figures/dtu-24/000004.png" width="200">
-    <img src="docs/figures/dtu-24/000005.png" width="200">
-    <img src="docs/figures/dtu-24/000009.png" width="200">
-    <img src="docs/figures/dtu-24/000015.png" width="200">
-    <img src="docs/figures/dtu-24/000045.png" width="200">
+      <img src="docs/figures/dtu-24/000000.png" width="30%" height=auto>
+      <img src="docs/figures/dtu-24/000001.png" width="30%" height=auto>
+      <img src="docs/figures/dtu-24/000002.png" width="30%" height=auto>
+    </p>
+    <p align="center">
+      <img src="docs/figures/dtu-24/000003.png" width="30%" height=auto>
+      <img src="docs/figures/dtu-24/000004.png" width="30%" height=auto>
+      <img src="docs/figures/dtu-24/000005.png" width="30%" height=auto>
+    </p>
+    <p align="center">
+      <img src="docs/figures/dtu-24/000009.png" width="30%" height=auto>
+      <img src="docs/figures/dtu-24/000015.png" width="30%" height=auto>
+      <img src="docs/figures/dtu-24/000045.png" width="30%" height=auto>
     </p>
    
 ## Data Downloading
