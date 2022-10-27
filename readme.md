@@ -29,6 +29,26 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
  <img src="docs/figures/v3-CrowdAI/000000000230.png" width="200">
 <p>
 
+- **A running example on the DTU-24 images**
+  ```bash
+  python -m hawp.ssl.predict --ckpt checkpoints/hawpv3-imagenet-03a84.pth  \
+    --threshold 0.05  \
+    --img ~/datasets/DTU/scan24/image/*.png \ 
+    --saveto docs/figures/dtu-24 --ext png \
+  ```
+    <p align="center">
+    <!-- <img src="figures/teaser.png" height="400" >
+    -->
+    <img src="docs/figures/dtu-24/000000.png" width="200">
+    <img src="docs/figures/dtu-24/000001.png" width="200">
+    <img src="docs/figures/dtu-24/000002.png" width="200">
+    <img src="docs/figures/dtu-24/000003.png" width="200">
+    <img src="docs/figures/dtu-24/000004.png" width="200">
+    <img src="docs/figures/dtu-24/000005.png" width="200">
+    <img src="docs/figures/dtu-24/000009.png" width="200">
+    <img src="docs/figures/dtu-24/000015.png" width="200">
+    </p>
+   
 ## Data Downloading
 <details>
 <summary>
