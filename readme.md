@@ -94,6 +94,10 @@ sh downloads.sh
 </details>
 
 ### Docker
+We also provide a [Dockerfile](docker/Dockerfile). You could build the docker image by running the following command lines.
+```bash
+sudo docker build - < Dockerfile --tag hawp:latest
+```
 ## Citations
 If you find our work useful in your research, please consider citing:
 ```
