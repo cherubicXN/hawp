@@ -37,9 +37,8 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
   gdown 134L-u9pgGtnzw0auPv8ykHqMjjZ2claO
   unzip data.zip
   ```
-
-- ...
-### HAWPv3 (Self-Supervised Learning)
+## Checkpoints Downloading
+- 
 ## Installation 
 ### Anaconda or Python
 
