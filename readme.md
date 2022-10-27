@@ -40,7 +40,8 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
 ## Checkpoints Downloading
 - 
 ## Installation 
-### Anaconda or Python
+### Anaconda
+<details>
 
 - Clone the code repo: ``git clone https://github.com/cherubicXN/hawp.git``.
 - Install ninja-build by ``sudo apt install ninja-build``.
