@@ -8,7 +8,7 @@ from hawp.base.utils.metric_evaluation import TPFP, AP
 from hawp.fsl.config import cfg
 from hawp.fsl.config.paths_catalog import DatasetCatalog
 from hawp.fsl.dataset import build_test_dataset
-from fsl.model.build import build_model
+from hawp.fsl.model.build import build_model
 
 import os
 import os.path as osp
