@@ -103,6 +103,9 @@ author = "Nan Xue and Tianfu Wu and Song Bai and Fu-Dong Wang and Gui-Song Xia a
 journal = {arXiv:2210.12971},
 year = {2022}
 }
+```
+and 
+```
 @inproceedings{HAWP,
 title = "Holistically-Attracted Wireframe Parsing",
 author = "Nan Xue and Tianfu Wu and Song Bai and Fu-Dong Wang and Gui-Song Xia and Liangpei Zhang and Philip H.S. Torr
@@ -114,3 +117,9 @@ year = {2020},
 
 ## Acknowledgment
 We acknowledge the effort from the authors of the Wireframe dataset and the YorkUrban dataset. These datasets make accurate line segment detection and wireframe parsing possible. We also thank [Rémi Pautrat](https://rpautrat.github.io/) for helpful discussions.
+
+
+## TODO
+  - Training code for HAWPv3
+  - Documentations
+  - Google Colab Notebook
