@@ -1,3 +1,16 @@
+# Quickstart
+
+
+<details>
+<summary><b>Step 1: Download the official checkpoint from <a href="https://github.com/cherubicXN/hawp-torchhub/releases/tag/HAWPv2">torchub</a></b> by running the <a href="downloads.sh">downloads.sh</a>.
+</summary>
+
+```bash
+wget https://github.com/cherubicXN/hawp-torchhub/releases/download/HAWPv2/hawpv2-edb9b23f.pth -P checkpoints
+```
+</details>
+
+Step 1: 
 # Training
 
 ```dotnetcli

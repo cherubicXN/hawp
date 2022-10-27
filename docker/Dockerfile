@@ -28,6 +28,8 @@ RUN ln -sv /usr/bin/python3 /usr/bin/python
 RUN pip3 install numpy==1.23.4 
 RUN pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116
 
+RUN git clone https://github.com/cherubicXN/hawp.git /root/hawp
+
 RUN  echo 'root:root' | chpasswd
 
 RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
