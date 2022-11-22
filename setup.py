@@ -8,7 +8,21 @@ from torch.utils.cpp_extension import CUDA_HOME
 from torch.utils.cpp_extension import CppExtension
 from torch.utils.cpp_extension import CUDAExtension
 
-requirements = ["torch", "torchvision"]
+requirements = [
+        "torch", 
+        "torchvision",
+        "opencv-python",
+        "cython",
+        "matplotlib",
+        "yacs",
+        "scikit-image",
+        "tqdm",
+        "python-json-logger",
+        "h5py",
+        "shapely",
+        "pycolmap",
+        "seaborn",
+        ]
 
 
 setup(
@@ -16,6 +30,6 @@ setup(
     version="1.0",
     author="nxue",
     description="Holistically-Attracted Wireframe Parsing",
-    # packages=find_packages(exclude=("configs", "tests",)),
+    packages=find_packages(exclude=('data', 'docker', 'configs', 'evaluation')),
     install_requires=requirements,
 )

@@ -4,7 +4,7 @@ import numpy as np
 import os
 import os.path as osp
 from tqdm import tqdm
-import hawp
+#import hawp
 from hawp.base.utils.comm import to_device
 from hawp.base.utils.logger import setup_logger
 from hawp.base.utils.metric_logger import MetricLogger
@@ -15,7 +15,6 @@ from hawp.fsl.config import cfg as model_config
 
 from hawp.ssl.config import Config, load_config
 from hawp.ssl.datasets import dataset_util
-# from .models import HAWP
 from hawp.ssl.models import MODELS
 
 
