@@ -30,6 +30,6 @@ setup(
     version="1.0",
     author="nxue",
     description="Holistically-Attracted Wireframe Parsing",
-    packages=find_packages(exclude=('data', 'docker', 'configs', 'evaluation')),
+    packages=find_packages(['hawp']),
     install_requires=requirements,
 )
