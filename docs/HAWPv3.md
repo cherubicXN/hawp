@@ -1,6 +1,6 @@
 # HAWPv3: Learning Wireframes via Self-Supervised Learning
 
-*The codes of HAWPv2 are placed in the directory of [hawp/fsl](../hawp/fsl).*
+*The codes of HAWPv3 are placed in the directory of [hawp/ssl](../hawp/ssl).*
 
 |Model Name|Comments|MD5|
 |---|---|---|
@@ -12,20 +12,18 @@
 - Run the following command line to obtain wireframes from HAWPv3 model
     <details>
         <summary><b>hawpv3-fdc5487a.pth</b></summary>
-        ```bash
+        
         python -m hawp.ssl.predict --ckpt checkpoints/hawpv3-fdc5487a.pth \
             --threshold 0.05 \
             --img {filename.png}
-        ```
     </details>
 
     <details>
-    <summary><b>hawpv3-imagenet-03a84.pth</b></summary>
-        ```bash
+        <summary><b>hawpv3-imagenet-03a84.pth</b></summary>
+        
         python -m hawp.ssl.predict --ckpt checkpoints/hawpv3-imagenet-03a84.pth \
             --threshold 0.05 \
             --img {filename.png}
-        ```
     </details>
 
 - A running example on the DTU-24 images
