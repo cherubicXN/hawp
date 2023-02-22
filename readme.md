@@ -84,7 +84,7 @@ conda develop .
 # Install pytorch, please be careful for the version of CUDA on your machine
 pip install torch==1.12.0+cu116 torchvision==0.13.0+cu116 torchaudio==0.12.0 --extra-index-url https://download.pytorch.org/whl/cu116 
 # Install other dependencies
-pip install -r requirements.txt
+pip install -r requirement.txt
 ```
 - Verify the installation.
 ```bash
