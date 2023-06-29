@@ -105,6 +105,7 @@ class WireframeDetector(nn.Module):
         #Matcher
         self.j2l_threshold = cfg.MODEL.PARSING_HEAD.J2L_THRESHOLD
         self.jmatch_threshold = cfg.MODEL.PARSING_HEAD.JMATCH_THRESHOLD
+        self.jhm_threshold = cfg.MODEL.PARSING_HEAD.JUNCTION_HM_THRESHOLD
 
         # LOI POOLING
         self.n_pts0     = cfg.MODEL.LOI_POOLING.NUM_POINTS
@@ -327,9 +328,9 @@ class WireframeDetector(nn.Module):
     
         jloc_pred_nms = non_maximum_suppression(jloc_pred[0])
 
-        topK = min(self.topk_junctions, int((jloc_pred_nms>0.008).float().sum().item()))
+        topK = min(self.topk_junctions, int((jloc_pred_nms>self.jhm_threshold).float().sum().item()))
         
-        juncs_pred, _ = get_junctions(non_maximum_suppression(jloc_pred[0]),joff_pred[0], topk=topK,th=0.008)
+        juncs_pred, _ = get_junctions(non_maximum_suppression(jloc_pred[0]),joff_pred[0], topk=topK,th=self.jhm_threshold)
 
         extra_info['time_proposal'] = time.time() - extra_info['time_proposal']
         extra_info['time_matching'] = time.time()

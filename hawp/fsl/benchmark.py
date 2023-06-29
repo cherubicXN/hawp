@@ -109,6 +109,9 @@ if __name__ == "__main__":
     parser.add_argument("--dataset", default='wireframe', choices=['wireframe','york'])
 
     parser.add_argument("--j2l", default = None, type = float, help = 'the threshold for junction-line attraction')
+
+    parser.add_argument("--jhm", default = None, type = float, help = 'the threshold for junction heatmap')
+
     parser.add_argument("--rscale",default=2, type=int, help='the residual scale')
 
     parser.add_argument('--seed',default=42,type=int)
@@ -143,6 +146,9 @@ if __name__ == "__main__":
 
     if args.j2l:
         model.j2l_threshold = args.j2l
+
+    if args.jhm:
+        model.jhm_threshold = args.jhm
     
     if args.dataset == 'york':
         model.topk_junctions = 512
