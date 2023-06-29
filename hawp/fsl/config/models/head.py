@@ -24,6 +24,7 @@ PARSING_HEAD.N_OUT_JUNC = 250
 PARSING_HEAD.N_OUT_LINE = 2500
 PARSING_HEAD.JMATCH_THRESHOLD = 1.5
 PARSING_HEAD.J2L_THRESHOLD = 1000.0
+PARSING_HEAD.JUNCTION_HM_THRESHOLD = 0.008
 #INFERENCE FLAGS
 #0, only use junctions to yield line segments
 #1, only use learned angles to yield line segments
