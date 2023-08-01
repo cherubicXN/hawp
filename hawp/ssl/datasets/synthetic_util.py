@@ -51,7 +51,7 @@ def add_salt_and_pepper(img):
     img[white > 0] = 255
     img[black > 0] = 0
     cv.blur(img, (5, 5), img)
-    return np.empty((0, 2), dtype=np.int)
+    return np.empty((0, 2), dtype=np.int32)
 
 
 def generate_background(size=(960, 1280), nb_blobs=100, min_rad_ratio=0.01,
@@ -756,7 +756,7 @@ def draw_checkerboard_multiseg(img, max_rows=7, max_cols=7,
 
     label_segments = np.concatenate(label_segments)
     """
-    label_segments = np.empty([0, 4], dtype=np.int)
+    label_segments = np.empty([0, 4], dtype=np.int32)
     # Iterate through rows
     for row_idx in range(rows + 1):
         # Include all the combination of the junctions
@@ -1026,7 +1026,7 @@ def draw_stripes_multiseg(img, max_nb_cols=13, min_len=0.04, min_label_len=64,
         else:
             continue
 
-    segments = (np.round(segments_new)).astype(np.int)
+    segments = (np.round(segments_new)).astype(np.int32)
 
     # Only record the segments longer than min_label_len
     points1 = segments[:, :2]
@@ -1191,7 +1191,7 @@ def draw_cube(img, min_size_ratio=0.2, min_label_len=64,
         else:
             continue
 
-    segments = (np.round(segments_new)).astype(np.int)
+    segments = (np.round(segments_new)).astype(np.int32)
 
     # Only record the segments longer than min_label_len
     points1 = segments[:, :2]

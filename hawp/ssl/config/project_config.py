@@ -13,10 +13,12 @@ class Config(object):
         os.path.dirname(__file__),
         '..','..','..','data-ssl'
     )
+    default_dataroot = os.path.abspath(default_dataroot)
     default_exproot = os.path.join(
         os.path.dirname(__file__),
         '..','..','..','exp-ssl'
     )
+    default_exproot = os.path.abspath(default_exproot)
 
     DATASET_ROOT = os.getenv("DATASET_ROOT", default_dataroot)  # TODO: path to your datasets folder
     if not os.path.exists(DATASET_ROOT):

@@ -15,7 +15,7 @@ def random_scaling(image, junctions, line_map, scale=1., h_crop=0, w_crop=0):
 
     # Nothing to do if the scale is too close to 1
     if H_scale == H and W_scale == W:
-        return (image, junctions, line_map, np.ones([H, W], dtype=np.int))
+        return (image, junctions, line_map, np.ones([H, W], dtype=np.int32))
 
     # Zoom-in => resize and random crop
     if scale >= 1.:
@@ -23,7 +23,7 @@ def random_scaling(image, junctions, line_map, scale=1., h_crop=0, w_crop=0):
                                interpolation=cv2.INTER_LINEAR)
         # Crop the image
         image = image_big[h_crop:h_crop+H, w_crop:w_crop+W, ...]
-        valid_mask = np.ones([H, W], dtype=np.int)
+        valid_mask = np.ones([H, W], dtype=np.int32)
 
         # Process junctions
         junctions, line_map = process_junctions_and_line_map(
@@ -41,7 +41,7 @@ def random_scaling(image, junctions, line_map, scale=1., h_crop=0, w_crop=0):
         image = np.zeros(image_shape_raw, dtype=np.float)
         image[h_start:h_start+H_scale,
               w_start:w_start+W_scale, ...] = image_small
-        valid_mask = np.zeros([H, W], dtype=np.int)
+        valid_mask = np.zeros([H, W], dtype=np.int32)
         valid_mask[h_start:h_start+H_scale, w_start:w_start+W_scale] = 1
 
         # Process the junctions
@@ -91,7 +91,7 @@ def process_junctions_and_line_map(h_start, w_start, H, W, H_scale, W_scale,
                     (line_segments_new, segment), axis=0)
             else:
                 continue
-        line_segments_new = (np.round(line_segments_new)).astype(np.int)
+        line_segments_new = (np.round(line_segments_new)).astype(np.int32)
         # Filter segments with 0 length
         segment_lens = np.linalg.norm(
             line_segments_new[:, :2] - line_segments_new[:, 2:], axis=-1)
@@ -107,7 +107,7 @@ def process_junctions_and_line_map(h_start, w_start, H, W, H_scale, W_scale,
             junctions_new = np.unique(junctions_new, axis=0)
             # Generate line map from points and segments
             line_map = get_line_map(junctions_new,
-                                    line_segments_new).astype(np.int)
+                                    line_segments_new).astype(np.int32)
         junctions_new[:, 0] -= h_start
         junctions_new[:, 1] -= w_start
         junctions = junctions_new

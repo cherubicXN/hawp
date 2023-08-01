@@ -284,7 +284,7 @@ def warp_line_segment(line_segments, homography, image_size):
         else:
             continue
 
-    warped_segments = (np.round(warped_segments_new)).astype(np.int)
+    warped_segments = (np.round(warped_segments_new)).astype(np.int32)
     return warped_segments
 
 
@@ -334,7 +334,7 @@ class homography_transform(object):
 
             # Generate line map from points and segments
             line_map = get_line_map(junctions_new,
-                                    warped_segments).astype(np.int)
+                                    warped_segments).astype(np.int32)
             # Compute the heatmap
             warped_heatmap = get_line_heatmap(np.flip(junctions_new, axis=1),
                                               line_map, self.image_size)
