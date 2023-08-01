@@ -1,4 +1,5 @@
 from collections import defaultdict
+from easydict import EasyDict
 
 import torch
 from torch import nn
@@ -350,7 +351,7 @@ class HAWP(HAWPBase):
             'width': annotations[0]['width'],
             'height': annotations[0]['height'],
         }
-
+        output = EasyDict(output)
         return output, extra_info
 
     def forward(self, images, annotations = None, targets = None):
