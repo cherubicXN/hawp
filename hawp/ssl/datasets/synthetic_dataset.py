@@ -274,10 +274,10 @@ class SyntheticShapes(Dataset):
 
             # Convert the data
             if data["points"] is not None:
-                points = np.flip(data["points"], axis=1).astype(np.float)
+                points = np.flip(data["points"], axis=1).astype('float')
                 line_map = data["line_map"].astype(np.int32)
             else:
-                points = np.zeros([0, 2]).astype(np.float)
+                points = np.zeros([0, 2]).astype('float')
                 line_map = np.zeros([0, 0]).astype(np.int32)
 
             # Post-processing
@@ -287,9 +287,9 @@ class SyntheticShapes(Dataset):
             # Resize the image and the point location.
             points = (points
                       * np.array(self.config['preprocessing']['resize'],
-                                 np.float)
+                                 'float')
                       / np.array(self.config['generation']['image_size'],
-                                 np.float))
+                                 'float'))
             image = cv2.resize(
                 image, tuple(self.config['preprocessing']['resize'][::-1]),
                 interpolation=cv2.INTER_LINEAR)

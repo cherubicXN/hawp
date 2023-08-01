@@ -189,8 +189,8 @@ def get_line_heatmap(junctions, line_map, size=[480, 640], thickness=1):
         thickness = int(thickness)
 
     # If the junction points are not int => round them and convert to int
-    if not junctions.dtype == np.int:
-        junctions = (np.round(junctions)).astype(np.int)
+    if not junctions.dtype == np.int32:
+        junctions = (np.round(junctions)).astype(np.int32)
 
     # Initialize empty map
     heat_map = np.zeros(size)
@@ -222,8 +222,8 @@ def draw_lines(img, nb_lines=10, min_len=32, min_label_len=32):
     """
     # Set line number and points placeholder
     num_lines = random_state.randint(1, nb_lines)
-    segments = np.empty((0, 4), dtype=np.int)
-    points = np.empty((0, 2), dtype=np.int)
+    segments = np.empty((0, 4), dtype=np.int32)
+    points = np.empty((0, 2), dtype=np.int32)
     background_color = int(np.mean(img))
     min_dim = min(img.shape)
 
@@ -404,11 +404,11 @@ def draw_multiple_polygons(img, max_sides=8, nb_polygons=30, min_len=32,
       max_sides: maximal number of sides + 1
       nb_polygons: maximal number of polygons
     """
-    segments = np.empty((0, 4), dtype=np.int)
-    label_segments = np.empty((0, 4), dtype=np.int)
+    segments = np.empty((0, 4), dtype=np.int32)
+    label_segments = np.empty((0, 4), dtype=np.int32)
     centers = []
     rads = []
-    points = np.empty((0, 2), dtype=np.int)
+    points = np.empty((0, 2), dtype=np.int32)
     background_color = int(np.mean(img))
 
     min_dim = min(img.shape[0], img.shape[1])
@@ -559,8 +559,8 @@ def draw_ellipses(img, nb_ellipses=20):
     Parameters:
       nb_ellipses: maximal number of ellipses
     """
-    centers = np.empty((0, 2), dtype=np.int)
-    rads = np.empty((0, 1), dtype=np.int)
+    centers = np.empty((0, 2), dtype=np.int32)
+    rads = np.empty((0, 1), dtype=np.int32)
     min_dim = min(img.shape[0], img.shape[1]) / 4
     background_color = int(np.mean(img))
     for i in range(nb_ellipses):
@@ -581,7 +581,7 @@ def draw_ellipses(img, nb_ellipses=20):
         col = get_random_color(background_color)
         angle = random_state.rand() * 90
         cv.ellipse(img, (x, y), (ax, ay), angle, 0, 360, col, -1)
-    return np.empty((0, 2), dtype=np.int)
+    return np.empty((0, 2), dtype=np.int32)
 
 
 def draw_star(img, nb_branches=6, min_len=32, min_label_len=64):
@@ -815,7 +815,7 @@ def draw_checkerboard_multiseg(img, max_rows=7, max_cols=7,
         else:
             continue
 
-    label_segments = np.round(label_segments_filtered).astype(np.int)
+    label_segments = np.round(label_segments_filtered).astype(np.int32)
     
     # Only record the segments longer than min_label_len
     points1 = label_segments[:, :2]
