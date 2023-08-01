@@ -2,6 +2,7 @@
 Code adapted from https://github.com/rpautrat/SuperPoint
 Module used to generate geometrical synthetic shapes
 """
+
 import math
 import cv2 as cv
 import numpy as np
