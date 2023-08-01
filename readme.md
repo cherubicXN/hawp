@@ -77,7 +77,8 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
 ```bash
 conda create -n hawp python==3.9
 conda activate hawp
-conda develop .
+# conda develop .
+pip install -e .
 ```
 - Run the following command lines to install the dependencies of HAWP
 ```bash

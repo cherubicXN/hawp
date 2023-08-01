@@ -18,6 +18,13 @@ class HAWPBase(nn.Module):
         
         self.register_buffer('tspan', torch.linspace(0, 1, self.num_points)[None,None,:])
 
+    @classmethod 
+    def configure(cls, opts):
+        pass 
+    @classmethod
+    def cli(cls, parser):
+        pass
+
     @staticmethod
     def bilinear_sampling(features, points):
         h,w = features.size(1), features.size(2)
