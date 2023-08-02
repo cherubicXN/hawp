@@ -20,16 +20,11 @@ from torch.utils.data import DataLoader
 import torch.utils.data.dataloader as torch_loader
 
 from pathlib import Path
-import argparse
-import yaml
-import logging
-import time
-import datetime
+from tqdm import tqdm
+import argparse, yaml, logging, time, datetime, copy, math, h5py, hashlib
 import matplotlib.pyplot as plt
-import copy
-import math
-import h5py
-import hashlib
+
+YAML_TEMPLATE = load_config(Path(__file__).parent/'config/exports/template.yaml')
 
 class ArgumentDefaultsHelpFormatter(argparse.ArgumentDefaultsHelpFormatter):
     """Help message formatter which adds default values to argument help.
@@ -147,6 +142,7 @@ def parse_args():
         with open(export_dir/'{}-model-{:05d}.sh'.format(hash,args.epoch),'w') as writer:
             writer.write(cmd)
     
+
     for k in MODELS.keys():
         MODELS[k].configure(args)
     return args
@@ -174,8 +170,14 @@ def export_homography_adaptation(args, model,
                                shuffle=False, pin_memory=False,
                                collate_fn=collate_fn)
     
-    from tqdm import tqdm
+    
 
+    YAML_TEMPLATE['gt_source_train'] = str(args.dest)
+    YAML_TEMPLATE['dataset_name'] = dataset_cfg['dataset_name']
+
+    with open(args.dest.with_suffix('.yaml'), 'w') as f:
+        yaml.safe_dump(YAML_TEMPLATE, f)
+    
     with h5py.File(output_path, "w", libver="latest", swmr=True) as f:
         num_lines_list = []
         for filename_idx, data in enumerate(tqdm(export_loader)):
@@ -203,6 +205,10 @@ def export_homography_adaptation(args, model,
                 logger.info('h5-Dest: {}'.format(args.dest))
 
 
+    logger.info('Label Generation Done!')
+    logger.info('Label path: {}'.format(args.dest))
+    logger.info('YAML file path: {}'.format(args.dest.with_suffix('.yaml')))
+    logger.info('You can use {} to train a new model'.format(args.dest.with_suffix('.yaml')))
     
 
 def homography_adaptation(args,input_images, model, homography_cfg):
