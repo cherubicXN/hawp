@@ -29,6 +29,7 @@ import matplotlib.pyplot as plt
 import copy
 import math
 import h5py
+import hashlib
 # Get the filename padded with 0.
 def get_padded_filename(num_pad, idx):
     file_len = len("%d" % (idx))
@@ -254,11 +255,13 @@ def parse_args():
     group.add_argument('-c','--ckpt', required='--workdir' not in sys.argv, type=str, help = 'path of the checkpoint')
     group.add_argument('-d','--dest', required='--workdir' not in sys.argv, type=str, help = 'the path of the exported pseudo labels', action=CheckExt({'.h5'}))
 
-    group = aparser.add_argument_group('line segment filtering options')
+    group_filter = aparser.add_argument_group('line segment filtering options')
 
-    group.add_argument('--min-score',default=0.75,type=float, help = 'the minimum score threshold of line segments')
-    group.add_argument('--display', default=False, action='store_true')
-    group.add_argument('--ajk', default=False, action='store_true', help = 'ajk means All Junctions are Kept. If True, the junctions that do not associate with lines are kept')
+    group_filter.add_argument('--min-score','--min_score',default=0.75,type=float, help = 'the minimum score threshold of line segments')
+    group_filter.add_argument('--ajk', default=False, action='store_true', help = 'ajk means All Junctions are Kept. If True, the junctions that do not associate with lines are kept')
+
+    group_debug = aparser.add_argument_group('debug options')
+    group_debug.add_argument('--display', default=False, action='store_true')
 
     for k in MODELS.keys():
         MODELS[k].cli(aparser)
@@ -273,7 +276,6 @@ def parse_args():
         export_dir = Path(Config.export_dataroot)/Path(args.workdir).name
         export_dir.mkdir(exist_ok=True)
 
-        import hashlib
 
         # import pdb; pdb.set_trace()
         # args.dest = export_dir/'model-{:05d}.h5'.format(args.epoch)
@@ -282,8 +284,11 @@ def parse_args():
         cmd += '\n'
         cmd += '# python -m sslib.export-debug \\\n'
         for key, val in args.__dict__.items():
+            if key in [x.dest for x in group_debug._group_actions]:
+                continue
             cmd += '# --{} {}'.format(key,val)
             cmd += '\\\n'
+
         hash = hashlib.md5(cmd.encode('utf-8')).hexdigest()
 
         args.dest = export_dir/'{}-model-{:05d}.h5'.format(hash, args.epoch)

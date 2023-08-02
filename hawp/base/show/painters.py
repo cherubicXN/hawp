@@ -43,8 +43,6 @@ class HAWPainter:
         
         if isinstance(line_segments, torch.Tensor):
             line_segments = line_segments.cpu().numpy()
-        
-
 
         # line_segments = wireframe.line_segments(threshold=self.confidence_threshold)
         # line_segments = line_segments.cpu().numpy()
