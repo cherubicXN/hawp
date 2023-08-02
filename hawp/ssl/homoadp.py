@@ -145,7 +145,6 @@ def homography_adaptation(args,input_images, model, homography_cfg):
 
     heatmap_counts = torch.sum(heatmap_counts,dim=0,keepdim=True)
     heatmaps_averaged = heatmap_probs.sum(dim=0,keepdim=True)/heatmap_counts
-    
     outputs, _ = model.detect_with_heatmaps(input_images, meta, heatmaps=heatmaps_averaged,min_score=args.min_score)
     # import pdb; pdb.set_trace()
 

@@ -1,0 +1,56 @@
+dataset_name: "wireframe"
+add_augmentation_to_all_splits: False
+gray_scale: True
+# Ground truth source (official or path to the epxorted h5 dataset.)
+gt_source_train: "official"
+gt_source_test: "official"
+# Date preprocessing configuration.
+preprocessing:
+    resize: [512, 512]
+    blur_size: 11
+augmentation:
+    photometric:
+        enable: True
+    homographic:
+        enable: True
+# The homography adaptation configuration
+homography_adaptation:
+    num_iter: 100
+    aggregation: 'sum'
+    mode: 'ver1'
+    valid_border_margin: 3
+    min_counts: 30
+    homographies:
+        translation: true
+        rotation: true
+        scaling: true
+        perspective: true
+        scaling_amplitude: 0.2
+        perspective_amplitude_x: 0.2
+        perspective_amplitude_y: 0.2
+        allow_artifacts: true
+        patch_ratio: 0.85
+# Evaluation related config
+evaluation:
+    repeatability:
+        # Initial random seed used to sample homographic augmentation
+        seed: 200
+        # Parameter used to sample illumination change evaluation set.
+        photometric:
+            enable: False
+        # Parameter used to sample viewpoint change evaluation set.
+        homographic:
+            enable: True
+            num_samples: 2
+            params:
+                translation: true
+                rotation: true
+                scaling: true
+                perspective: true
+                scaling_amplitude: 0.2
+                perspective_amplitude_x: 0.2
+                perspective_amplitude_y: 0.2
+                patch_ratio: 0.85
+                max_angle: 1.57
+                allow_artifacts: true
+            valid_border_margin: 3
