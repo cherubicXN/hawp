@@ -38,7 +38,7 @@ def random_scaling(image, junctions, line_map, scale=1., h_crop=0, w_crop=0):
         h_start = round((H - H_scale) / 2)
         w_start = round((W - W_scale) / 2)
         # Paste the image to the middle
-        image = np.zeros(image_shape_raw, dtype=np.float)
+        image = np.zeros(image_shape_raw, dtype='float')
         image[h_start:h_start+H_scale,
               w_start:w_start+W_scale, ...] = image_small
         valid_mask = np.zeros([H, W], dtype=np.int32)
