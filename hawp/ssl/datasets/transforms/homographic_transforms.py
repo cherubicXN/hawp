@@ -285,6 +285,7 @@ def warp_line_segment(line_segments, homography, image_size):
             continue
 
     warped_segments = (np.round(warped_segments_new)).astype(np.int32)
+
     return warped_segments
 
 

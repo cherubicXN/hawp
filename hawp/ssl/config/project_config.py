@@ -52,5 +52,6 @@ class Config(object):
     ## Experiment Setting ##
     ########################
     EXP_PATH = os.getenv("EXP_PATH", default_exproot)  # TODO: path to your experiments folder
+
     if not os.path.exists(EXP_PATH):
         os.makedirs(EXP_PATH)

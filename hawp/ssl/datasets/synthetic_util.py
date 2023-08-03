@@ -2,7 +2,6 @@
 Code adapted from https://github.com/rpautrat/SuperPoint
 Module used to generate geometrical synthetic shapes
 """
-
 import math
 import cv2 as cv
 import numpy as np
@@ -225,6 +224,7 @@ def draw_lines(img, nb_lines=10, min_len=32, min_label_len=32):
     num_lines = random_state.randint(1, nb_lines)
     segments = np.empty((0, 4), dtype=np.int32)
     points = np.empty((0, 2), dtype=np.int32)
+    
     background_color = int(np.mean(img))
     min_dim = min(img.shape)
 

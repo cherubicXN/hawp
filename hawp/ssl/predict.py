@@ -4,7 +4,7 @@ import numpy as np
 import os
 import os.path as osp
 from tqdm import tqdm
-#import hawp
+
 from hawp.base import to_device, setup_logger, MetricLogger, save_config
 from hawp.base import show
 
@@ -68,7 +68,6 @@ def main():
     if args.saveto:
         os.makedirs(args.saveto,exist_ok=True)
         DEST = args.saveto
-    
     show.Canvas.show = True
     painter = show.painters.HAWPainter()
 
@@ -94,6 +93,7 @@ def main():
 
         with show.image_canvas(fname) as ax:
             painter.draw_wireframe(ax,outputs)
+
 
 if __name__ == "__main__":
     main()

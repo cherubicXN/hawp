@@ -489,6 +489,7 @@ class SyntheticShapes(Dataset):
     def junc_to_junc_map(junctions, image_size):
         """ Convert junction points to junction maps. """
         junctions = np.round(junctions).astype(np.int32)
+
         # Clip the boundary by image size
         junctions[:, 0] = np.clip(junctions[:, 0], 0., image_size[0]-1)
         junctions[:, 1] = np.clip(junctions[:, 1], 0., image_size[1]-1)

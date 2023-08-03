@@ -508,7 +508,7 @@ class HAWP_heatmap(HAWPBase):
             return output_batch[0], {}
 
         return output_batch, {}
-        # import pdb; pdb.set_trace()
+
     def forward(self, images, annotations = None, targets = None):
         if self.training:
             return self.forward_train(images, annotations=annotations)

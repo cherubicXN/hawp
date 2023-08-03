@@ -77,7 +77,6 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
 ```bash
 conda create -n hawp python==3.9
 conda activate hawp
-# conda develop .
 pip install -e .
 ```
 - Run the following command lines to install the dependencies of HAWP
@@ -95,6 +94,7 @@ python -c "import torch; print(torch.cuda.is_available())" # Check if the instal
 ```bash
 sh downloads.sh
 ```
+
 </details>
 
 <details>
@@ -132,6 +132,5 @@ We acknowledge the effort from the authors of the Wireframe dataset and the York
 
 
 ## TODO
-  - Training code for HAWPv3
   - Documentations
   - Google Colab Notebook
