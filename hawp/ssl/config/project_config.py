@@ -9,7 +9,18 @@ class Config(object):
     #####################
     ## Dataset setting ##
     #####################
-    DATASET_ROOT = os.getenv("DATASET_ROOT", "data-ssl")  # TODO: path to your datasets folder
+    default_dataroot = os.path.join(
+        os.path.dirname(__file__),
+        '..','..','..','data-ssl'
+    )
+    default_dataroot = os.path.abspath(default_dataroot)
+    default_exproot = os.path.join(
+        os.path.dirname(__file__),
+        '..','..','..','exp-ssl'
+    )
+    default_exproot = os.path.abspath(default_exproot)
+
+    DATASET_ROOT = os.getenv("DATASET_ROOT", default_dataroot)  # TODO: path to your datasets folder
     if not os.path.exists(DATASET_ROOT):
         os.makedirs(DATASET_ROOT)
     
@@ -40,6 +51,7 @@ class Config(object):
     ########################
     ## Experiment Setting ##
     ########################
-    EXP_PATH = os.getenv("EXP_PATH", "exp-ssl")  # TODO: path to your experiments folder
+    EXP_PATH = os.getenv("EXP_PATH", default_exproot)  # TODO: path to your experiments folder
+
     if not os.path.exists(EXP_PATH):
         os.makedirs(EXP_PATH)

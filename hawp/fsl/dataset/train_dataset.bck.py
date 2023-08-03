@@ -35,8 +35,8 @@ class TrainDataset(Dataset):
         image = image.astype(float)[:,:,:3]
         # image = Image.open(osp.join(self.root,ann['filename'])).convert('RGB')
         for key,_type in (['junctions',np.float32],
-                          ['edges_positive',np.long],
-                          ['edges_negative',np.long]):
+                          ['edges_positive',np.int32],
+                          ['edges_negative',np.int32]):
             ann[key] = np.array(ann[key],dtype=_type)
         
         width = ann['width']

@@ -432,7 +432,8 @@ class HAWP_heatmap(HAWPBase):
         if heatmaps is None:
             heatmaps = self.heatmap_decoder(features).softmax(dim=1)[:,1:]
         
-        heatmaps[0,0] = self.refine_heatmap(heatmaps[0,0],valid_thresh=1e-1)
+        for i in range(heatmaps.shape[0]):
+            heatmaps[i,0] = self.refine_heatmap(heatmaps[i,0],valid_thresh=1e-1)
         # import pdb; pdb.set_trace()
         loi_features = self.fc1(features)
         loi_features_thin = self.fc3(features)
@@ -446,67 +447,68 @@ class HAWP_heatmap(HAWPBase):
         jloc_logits = output[:,5:7].softmax(1)
         joff_pred= output[:,7:9].sigmoid() - 0.5
 
-        lines_pred = self.hafm_decoding(md_pred, dis_pred, res_pred if self.use_residual else None, flatten = True)[0]
+        lines_pred_batch = self.hafm_decoding(md_pred, dis_pred, res_pred if self.use_residual else None, flatten = True)
 
-        jloc_pred_nms = self.non_maximum_suppression(jloc_pred[0])
-        topK = min(self.num_junctions_inference, int((jloc_pred_nms>self.junction_threshold_hm).float().sum().item()))
-        juncs_pred, _ = self.get_junctions(jloc_pred_nms,joff_pred[0], topk=topK,th=self.junction_threshold_hm)
+        batch_size = lines_pred_batch.shape[0]
+
+
+        output_batch = []
+        for i in range(batch_size):
+            jloc_pred_nms = self.non_maximum_suppression(jloc_pred[i])
+            topK = min(self.num_junctions_inference, int((jloc_pred_nms>self.junction_threshold_hm).float().sum().item()))
+            juncs_pred, _ = self.get_junctions(jloc_pred_nms,joff_pred[i], topk=topK,th=self.junction_threshold_hm)
  
-        # import pdb; pdb.set_trace()
-        lines_adjusted, lines_init, perm = self.wireframe_matcher(juncs_pred, lines_pred)
+            lines_adjusted, lines_init, perm = self.wireframe_matcher(juncs_pred, lines_pred_batch[i])
 
-        scores_hm_adjust = self.compute_heatmap_scores(lines_adjusted*4,heatmaps[0,0])
+            scores_hm_adjust = self.compute_heatmap_scores(lines_adjusted*4,heatmaps[i,0])
         
-        e1_features = self.bilinear_sampling(loi_features[0], lines_adjusted[:,:2]-0.5).t()
-        e2_features = self.bilinear_sampling(loi_features[0], lines_adjusted[:,2:]-0.5).t()
+            e1_features = self.bilinear_sampling(loi_features[i], lines_adjusted[:,:2]-0.5).t()
+            e2_features = self.bilinear_sampling(loi_features[i], lines_adjusted[:,2:]-0.5).t()
 
-        f1 = self.compute_loi_features(loi_features_thin[0],lines_adjusted, tspan=self.tspan[...,1:-1])
-        f2 = self.compute_loi_features(loi_features_aux[0],lines_init, tspan=self.tspan[...,1:-1])
+            f1 = self.compute_loi_features(loi_features_thin[i],lines_adjusted, tspan=self.tspan[...,1:-1])
+            f2 = self.compute_loi_features(loi_features_aux[i],lines_init, tspan=self.tspan[...,1:-1])
 
-        line_features = torch.cat((e1_features,e2_features,f1,f2),dim=-1)
+            line_features = torch.cat((e1_features,e2_features,f1,f2),dim=-1)
 
-        logits = self.fc2_head(self.fc2(line_features)+self.fc2_res(torch.cat((f1,f2),dim=-1)))
+            logits = self.fc2_head(self.fc2(line_features)+self.fc2_res(torch.cat((f1,f2),dim=-1)))
 
-        if self.loi_cls_type == 'softmax':
-            scores = logits.softmax(dim=-1)[:,1]
-        else:
-            scores = logits.sigmoid()[:,0]
+            if self.loi_cls_type == 'softmax':
+                scores = logits.softmax(dim=-1)[:,1]
+            else:
+                scores = logits.sigmoid()[:,0]
 
-        final_scores = torch.sqrt(scores*scores_hm_adjust)
-        #final_scores = scores_hm_adjust
+            final_scores = torch.sqrt(scores*scores_hm_adjust)
+            #final_scores = scores_hm_adjust
+            
+            threshold = kwargs.get('min_score',0.0)
+
+            lines_final = lines_adjusted*4
+            final_juncs = juncs_pred*4
+
+            is_valid_line = final_scores>threshold
         
-        threshold = kwargs.get('min_score',0.0)
-
-        lines_final = lines_adjusted*4
-        final_juncs = juncs_pred*4
-
-        is_valid_line = final_scores>threshold
         
-        # import matplotlib.pyplot as plt
-        # plt.imshow(images[0,0].cpu())
-        # plt.plot(
-        #     [lines_final[is_valid_line,0].cpu().numpy(),lines_final[is_valid_line,2].cpu().numpy()],
-        #     [lines_final[is_valid_line,1].cpu().numpy(),lines_final[is_valid_line,3].cpu().numpy()],
-        #     'r-'
-        # )
-        # plt.show()
-        
-        output = {
-            'md_pred': md_pred,
-            'dis_pred': dis_pred,
-            'lines_pred': lines_final[is_valid_line],
-            'lines_score': final_scores[is_valid_line],
-            'juncs_pred': final_juncs,
-            # 'juncs_score': juncs_score,
-            'num_proposals': lines_adjusted.size(0),
-            'filename': annotations[0]['filename'],
-            'width': annotations[0]['width'],
-            'height': annotations[0]['height'],
-            # 'juncs_map': jloc_pred,
-            'heatmap': heatmaps
-        }
-        return output, {}
-        # import pdb; pdb.set_trace()
+            output = {
+                'md_pred': md_pred,
+                'dis_pred': dis_pred,
+                'lines_pred': lines_final[is_valid_line],
+                'lines_score': final_scores[is_valid_line],
+                'juncs_pred': final_juncs,
+                # 'juncs_score': juncs_score,
+                'num_proposals': lines_adjusted.size(0),
+                'filename': annotations[0]['filename'],
+                'width': annotations[0]['width'],
+                'height': annotations[0]['height'],
+                # 'juncs_map': jloc_pred,
+                'heatmap': heatmaps
+            }
+            output_batch.append(output)
+
+        if len(output_batch) == 1:
+            return output_batch[0], {}
+
+        return output_batch, {}
+
     def forward(self, images, annotations = None, targets = None):
         if self.training:
             return self.forward_train(images, annotations=annotations)

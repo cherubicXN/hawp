@@ -274,10 +274,10 @@ class SyntheticShapes(Dataset):
 
             # Convert the data
             if data["points"] is not None:
-                points = np.flip(data["points"], axis=1).astype(np.float)
+                points = np.flip(data["points"], axis=1).astype('float')
                 line_map = data["line_map"].astype(np.int32)
             else:
-                points = np.zeros([0, 2]).astype(np.float)
+                points = np.zeros([0, 2]).astype('float')
                 line_map = np.zeros([0, 0]).astype(np.int32)
 
             # Post-processing
@@ -287,9 +287,9 @@ class SyntheticShapes(Dataset):
             # Resize the image and the point location.
             points = (points
                       * np.array(self.config['preprocessing']['resize'],
-                                 np.float)
+                                 'float')
                       / np.array(self.config['generation']['image_size'],
-                                 np.float))
+                                 'float'))
             image = cv2.resize(
                 image, tuple(self.config['preprocessing']['resize'][::-1]),
                 interpolation=cv2.INTER_LINEAR)
@@ -488,7 +488,8 @@ class SyntheticShapes(Dataset):
     @staticmethod
     def junc_to_junc_map(junctions, image_size):
         """ Convert junction points to junction maps. """
-        junctions = np.round(junctions).astype(np.int)
+        junctions = np.round(junctions).astype(np.int32)
+
         # Clip the boundary by image size
         junctions[:, 0] = np.clip(junctions[:, 0], 0., image_size[0]-1)
         junctions[:, 1] = np.clip(junctions[:, 1], 0., image_size[1]-1)
@@ -497,7 +498,7 @@ class SyntheticShapes(Dataset):
         junc_map = np.zeros([image_size[0], image_size[1]])
         junc_map[junctions[:, 0], junctions[:, 1]] = 1
 
-        return junc_map[..., None].astype(np.int)
+        return junc_map[..., None].astype(np.int32)
 
     def train_preprocessing(self, data, disable_homoaug=False):
         """ Training preprocessing. """

@@ -10,3 +10,4 @@ shapely
 pycolmap
 seaborn
 kornia
+easydict

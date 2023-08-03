@@ -39,7 +39,7 @@ class HAFMencoder(object):
         # junctions[:,0] = junctions[:,0].clamp(min=0,max=width-1)
         # junctions[:,1] = junctions[:,1].clamp(min=0,max=height-1)
         junctions_np = junctions.cpu().numpy()
-        xint, yint = junctions_np[:,0].astype(np.long), junctions_np[:,1].astype(np.long)
+        xint, yint = junctions_np[:,0].astype(np.int32), junctions_np[:,1].astype(np.int32)
         off_x = junctions_np[:,0] - np.floor(junctions_np[:,0]) - 0.5
         off_y = junctions_np[:,1] - np.floor(junctions_np[:,1]) - 0.5
         jmap[yint, xint] = 1
