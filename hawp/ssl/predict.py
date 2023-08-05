@@ -42,6 +42,8 @@ def parse_args():
     aparser.add_argument('--whitebg', default=0.0, type=float)
     aparser.add_argument('--saveto', default=None, type=str,)
     aparser.add_argument('--ext', default='pdf', type=str, choices=['pdf','png'])
+    aparser.add_argument('--device', default='cuda', type=str, choices=['cuda','cpu','mps'])
+    aparser.add_argument('--disable-show', default=False, action='store_true')
 
     args = aparser.parse_args()
 
@@ -52,10 +54,9 @@ def main():
     model_config.merge_from_file(args.cfg)
     
     model = MODELS[args.metarch](model_config, gray_scale=True)
-    model = model.eval().cuda()
-
+    model = model.eval().to(args.device)
     weight_path = args.ckpt
-    state_dict = torch.load(weight_path)
+    state_dict = torch.load(weight_path,map_location='cpu')
 
     model.load_state_dict(state_dict)
     
@@ -68,18 +69,17 @@ def main():
     if args.saveto:
         os.makedirs(args.saveto,exist_ok=True)
         DEST = args.saveto
-    show.Canvas.show = True
+    show.Canvas.show = not args.disable_show
     painter = show.painters.HAWPainter()
 
     for fname in tqdm(args.img):
         image = cv2.imread(fname,0)
         
-        # import pdb; pdb.set_trace()
         ori_shape = image.shape[:2]
         image_cp = copy.deepcopy(image)
         image_ = cv2.resize(image_cp,(width,height))
         image_ = torch.from_numpy(image_).float()/255.0
-        image_ = image_[None,None].cuda()
+        image_ = image_[None,None].to(args.device)
         
         
         meta = {

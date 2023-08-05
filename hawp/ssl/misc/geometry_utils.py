@@ -1,8 +1,12 @@
 import numpy as np
 import torch
-from pycolmap import image_to_world, world_to_image
+
 from shapely.geometry.polygon import LinearRing
 
+try:
+    from pycolmap import image_to_world, world_to_image
+except:
+    pass
 
 ### Point-related utils
 
