@@ -9,7 +9,7 @@ setup(
     version="1.0",
     author="nxue",
     description="Holistically-Attracted Wireframe Parsing",
-    packages=find_packages(['hawp']),
+    packages=find_packages(),
     install_requires=[
         "torch", 
         "torchvision",
