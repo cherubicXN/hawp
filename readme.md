@@ -4,7 +4,8 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
 
 <!-- [**News**] The upgraded HAWPv2 and HAWPv3 are available now! 
 [**News**] We experimentally provided an easy-to-install version for inference-only usage of HAWP, please checkout the [``inference``](https://github.com/cherubicXN/hawp/tree/inference) branch for the details. -->
-
+[**News**] Our journal version has been accepted in PAMI!
+[**News**] The upgraded HAWPv2 and HAWPv3 are available now! 
 ## Highlights
 
 - **HAT Fields**: A General and Robust Representation of Line Segments for Wireframe Parsing
@@ -113,8 +114,8 @@ If you find our work useful in your research, please consider citing:
 @article{HAWP-journal,
 title = "Holistically-Attracted Wireframe Parsing: From Supervised to Self-Supervised Learning",
 author = "Nan Xue and Tianfu Wu and Song Bai and Fu-Dong Wang and Gui-Song Xia and Liangpei Zhang and Philip H.S. Torr
-journal = {arXiv:2210.12971},
-year = {2022}
+journal = "IEEE Trans. on Pattern Analysis and Machine Intelligence (PAMI)",
+year = {2023}
 }
 ```
 and 
