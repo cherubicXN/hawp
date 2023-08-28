@@ -5,6 +5,7 @@ This is the official implementation of our [paper](https://arxiv.org/abs/2210.12
 <!-- [**News**] The upgraded HAWPv2 and HAWPv3 are available now! 
 [**News**] We experimentally provided an easy-to-install version for inference-only usage of HAWP, please checkout the [``inference``](https://github.com/cherubicXN/hawp/tree/inference) branch for the details. -->
 [**News**] Our journal version has been accepted in PAMI!
+
 [**News**] The upgraded HAWPv2 and HAWPv3 are available now! 
 ## Highlights
 
