@@ -45,7 +45,13 @@ def parse_args():
     aparser.add_argument('--device', default='cuda', type=str, choices=['cuda','cpu','mps'])
     aparser.add_argument('--disable-show', default=False, action='store_true')
 
+    for k in MODELS.keys():
+        MODELS[k].cli(aparser)
+    
     args = aparser.parse_args()
+
+    for k in MODELS.keys():
+        MODELS[k].configure(args)
 
     return args
 
@@ -89,7 +95,7 @@ def main():
         }
         with torch.no_grad():
             outputs, _ = model(image_,[meta])
-
+        # import pdb; pdb.set_trace()
 
         with show.image_canvas(fname) as ax:
             painter.draw_wireframe(ax,outputs)

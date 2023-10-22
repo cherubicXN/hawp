@@ -17,8 +17,12 @@ from .registry import MODELS
 
 import math
 
-@MODELS.register('HAWP-heatmap')
+@MODELS.register('HAWP-hrheat')
 class HAWP_heatmap(HAWPBase):
+    JUNCTION_REFINEMENT_TEST = True
+    EDGE_SCORE_TEST = True
+    num_junctions_inference = 300
+    junction_threshold_hm = 0.008
     def __init__(self, cfg, *, gray_scale=False):
         super(HAWP_heatmap, self).__init__(
             num_points = cfg.MODEL.LOI_POOLING.NUM_POINTS,
@@ -49,8 +53,8 @@ class HAWP_heatmap(HAWPBase):
         self.n_out_line = cfg.MODEL.PARSING_HEAD.N_OUT_LINE
 
         # TODO: add to cfg
-        self.num_junctions_inference = 300
-        self.junction_threshold_hm = 0.008
+        # self.num_junctions_inference = 300
+        # self.junction_threshold_hm = 0.008
         self.use_residual = int(cfg.MODEL.PARSING_HEAD.USE_RESIDUAL)
         
         assert cfg.MODEL.LOI_POOLING.TYPE in ['softmax', 'sigmoid']
@@ -92,14 +96,31 @@ class HAWP_heatmap(HAWPBase):
         else:
             raise NotImplementError()
 
-        self.use_heatmap_decoder = cfg.MODEL.USE_LINE_HEATMAP
-        if self.use_heatmap_decoder:
-            self.heatmap_decoder = PixelShuffleDecoder(input_feat_dim=256)
+        self.use_heatmap_decoder = True
+        # if self.use_heatmap_decoder:
+        self.heatmap_decoder = PixelShuffleDecoder(input_feat_dim=256, output_channel=6)
 
+        # self.junction_decoder = PixelShuffleDecoder(input_feat_dim=256,output_channel=4)
         self.bce_loss = nn.BCEWithLogitsLoss(reduction='none')
         self.train_step = 0
 
-    
+    @classmethod
+    def configure(cls, opts):
+        if opts.disable_jrefine:
+            cls.JUNCTION_REFINEMENT_TEST = False
+
+        if opts.disable_edgescore:
+            cls.EDGE_SCORE_TEST = False
+        
+        cls.num_junctions_inference = opts.num_junctions
+    @classmethod
+    def cli(cls, parser):
+        group = parser.add_argument_group('Model specific arguments for HAWPv3')
+        group.add_argument('--disable-jrefine', action='store_true', help='disable junction refinement')
+        group.add_argument('--disable-edgescore', action='store_true', help='disable edge score')
+        group.add_argument('--num_junctions', type=int, default=300, help='number of junctions')
+        group.add_argument('--jth', type=float, default=0.008, help='junction threshold')
+        
     def wireframe_matcher(self, juncs_pred, lines_pred, is_train=False):
         cost1 = torch.sum((lines_pred[:,:2]-juncs_pred[:,None])**2,dim=-1)
         cost2 = torch.sum((lines_pred[:,2:]-juncs_pred[:,None])**2,dim=-1)
@@ -344,7 +365,10 @@ class HAWP_heatmap(HAWPBase):
     def compute_heatmaps(self, images, annotations = None):
         device = images.device
         outputs, features = self.backbone(images)
-        heatmaps = self.heatmap_decoder(features).softmax(dim=1)[:,1:]
+
+        highres_features = self.heatmap_decoder(features)
+
+        heatmaps = highres_features[:,:2].softmax(dim=1)[:,1:]
 
         return heatmaps
 
@@ -425,16 +449,26 @@ class HAWP_heatmap(HAWPBase):
         heatmap = torch.clamp(heatmap / max20, min=0., max=1.)
 
         return heatmap
+
     @torch.no_grad()
     def detect_with_heatmaps(self, images, annotations=None, heatmaps = None,**kwargs):
         device = images.device
         outputs, features = self.backbone(images)
-        if heatmaps is None:
-            heatmaps = self.heatmap_decoder(features).softmax(dim=1)[:,1:]
+
+        highres_features = self.heatmap_decoder(features)
         
-        for i in range(heatmaps.shape[0]):
-            heatmaps[i,0] = self.refine_heatmap(heatmaps[i,0],valid_thresh=1e-1)
-        # import pdb; pdb.set_trace()
+        if heatmaps is None:
+            # heatmaps = self.heatmap_decoder(features).softmax(dim=1)[:,1:]
+            heatmaps = highres_features[:,:2].softmax(dim=1)[:,1:]
+        jout = highres_features[:,2:]
+        import matplotlib.pyplot as plt
+
+        heatmaps[0,0] = self.refine_heatmap(heatmaps[0,0],valid_thresh=1e-1)
+        
+        jloc_pred_hr, joff_pred_hr = jout[:,:2], jout[:,2:]
+        jloc_pred_hr = jloc_pred_hr.softmax(1)[:,1:]
+        joff_pred_hr = joff_pred_hr.sigmoid() - 0.5
+
         loi_features = self.fc1(features)
         loi_features_thin = self.fc3(features)
         loi_features_aux = self.fc4(features)
@@ -447,68 +481,76 @@ class HAWP_heatmap(HAWPBase):
         jloc_logits = output[:,5:7].softmax(1)
         joff_pred= output[:,7:9].sigmoid() - 0.5
 
-        lines_pred_batch = self.hafm_decoding(md_pred, dis_pred, res_pred if self.use_residual else None, flatten = True)
+        lines_pred = self.hafm_decoding(md_pred, dis_pred, res_pred if self.use_residual else None, flatten = True)[0]
 
-        batch_size = lines_pred_batch.shape[0]
-
-
-        output_batch = []
-        for i in range(batch_size):
-            jloc_pred_nms = self.non_maximum_suppression(jloc_pred[i])
-            topK = min(self.num_junctions_inference, int((jloc_pred_nms>self.junction_threshold_hm).float().sum().item()))
-            juncs_pred, _ = self.get_junctions(jloc_pred_nms,joff_pred[i], topk=topK,th=self.junction_threshold_hm)
- 
-            lines_adjusted, lines_init, perm = self.wireframe_matcher(juncs_pred, lines_pred_batch[i])
-
-            scores_hm_adjust = self.compute_heatmap_scores(lines_adjusted*4,heatmaps[i,0])
+        # jloc_pred = jheatmap
+        jloc_pred_nms = self.non_maximum_suppression(jloc_pred[0])
         
-            e1_features = self.bilinear_sampling(loi_features[i], lines_adjusted[:,:2]-0.5).t()
-            e2_features = self.bilinear_sampling(loi_features[i], lines_adjusted[:,2:]-0.5).t()
+        topK = min(self.num_junctions_inference, int((jloc_pred_nms>self.junction_threshold_hm).float().sum().item()))       
+        juncs_pred, juncs_pred_score = self.get_junctions(jloc_pred_nms,joff_pred, topk=topK,th=self.junction_threshold_hm)
+        
+        if self.JUNCTION_REFINEMENT_TEST:
+            juncs_pred = self.refine_junctions(juncs_pred, juncs_pred_score,jloc_pred_hr[0,0], joff_pred_hr[0])
 
-            f1 = self.compute_loi_features(loi_features_thin[i],lines_adjusted, tspan=self.tspan[...,1:-1])
-            f2 = self.compute_loi_features(loi_features_aux[i],lines_init, tspan=self.tspan[...,1:-1])
+        lines_adjusted, lines_init, perm = self.wireframe_matcher(juncs_pred, lines_pred)
 
-            line_features = torch.cat((e1_features,e2_features,f1,f2),dim=-1)
+        scores_hm_adjust = self.compute_heatmap_scores(lines_adjusted*4,heatmaps[0,0])
+        
+        e1_features = self.bilinear_sampling(loi_features[0], lines_adjusted[:,:2]-0.5).t()
+        e2_features = self.bilinear_sampling(loi_features[0], lines_adjusted[:,2:]-0.5).t()
 
-            logits = self.fc2_head(self.fc2(line_features)+self.fc2_res(torch.cat((f1,f2),dim=-1)))
+        f1 = self.compute_loi_features(loi_features_thin[0],lines_adjusted, tspan=self.tspan[...,1:-1])
+        f2 = self.compute_loi_features(loi_features_aux[0],lines_init, tspan=self.tspan[...,1:-1])
 
-            if self.loi_cls_type == 'softmax':
-                scores = logits.softmax(dim=-1)[:,1]
-            else:
-                scores = logits.sigmoid()[:,0]
+        line_features = torch.cat((e1_features,e2_features,f1,f2),dim=-1)
 
+        logits = self.fc2_head(self.fc2(line_features)+self.fc2_res(torch.cat((f1,f2),dim=-1)))
+
+        if self.loi_cls_type == 'softmax':
+            scores = logits.softmax(dim=-1)[:,1]
+        else:
+            scores = logits.sigmoid()[:,0]
+
+        if self.EDGE_SCORE_TEST:
             final_scores = torch.sqrt(scores*scores_hm_adjust)
-            #final_scores = scores_hm_adjust
-            
-            threshold = kwargs.get('min_score',0.0)
+        else:
+            final_scores = scores
+        
+        threshold = kwargs.get('min_score',0.0)
 
-            lines_final = lines_adjusted*4
-            final_juncs = juncs_pred*4
+        sx = annotations[0]['width']/output.size(3)
+        sy = annotations[0]['height']/output.size(2)
 
-            is_valid_line = final_scores>threshold
+        lines_final = lines_adjusted.clone()
+        lines_final[:,0] *= sx
+        lines_final[:,1] *= sy
+        lines_final[:,2] *= sx
+        lines_final[:,3] *= sy
+
+        final_juncs = juncs_pred
+        final_juncs[:,0] *= sx
+        final_juncs[:,1] *= sy
+        
+
+        is_valid_line = final_scores>threshold
         
         
-            output = {
-                'md_pred': md_pred,
-                'dis_pred': dis_pred,
-                'lines_pred': lines_final[is_valid_line],
-                'lines_score': final_scores[is_valid_line],
-                'juncs_pred': final_juncs,
-                # 'juncs_score': juncs_score,
-                'num_proposals': lines_adjusted.size(0),
-                'filename': annotations[0]['filename'],
-                'width': annotations[0]['width'],
-                'height': annotations[0]['height'],
-                # 'juncs_map': jloc_pred,
-                'heatmap': heatmaps
-            }
-            output_batch.append(output)
-
-        if len(output_batch) == 1:
-            return output_batch[0], {}
-
-        return output_batch, {}
-
+        output = {
+            'md_pred': md_pred,
+            'dis_pred': dis_pred,
+            'lines_pred': lines_final[is_valid_line],
+            'lines_score': final_scores[is_valid_line],
+            'juncs_pred': final_juncs,
+            # 'juncs_score': juncs_score,
+            'num_proposals': lines_adjusted.size(0),
+            'filename': annotations[0]['filename'],
+            'width': annotations[0]['width'],
+            'height': annotations[0]['height'],
+            # 'juncs_map': jloc_pred,
+            'heatmap': heatmaps
+        }
+        return output, {}
+        # import pdb; pdb.set_trace()
     def forward(self, images, annotations = None, targets = None):
         if self.training:
             return self.forward_train(images, annotations=annotations)
@@ -536,9 +578,17 @@ class HAWP_heatmap(HAWPBase):
             'loss_aux': 0.0,
         }
         valid_mask = annotations['valid_mask']
-        if self.use_heatmap_decoder:
-            heatmaps_pred = self.heatmap_decoder(features)
-            loss_dict['loss_heatmap'] = torch.mean((self.loss(heatmaps_pred,annotations['heatmap'][:,0].long()))*valid_mask)
+        
+        highres_features = self.heatmap_decoder(features)
+        heatmaps_pred = highres_features[:,:2]
+
+        # jout = self.junction_decoder(features)
+        jout = highres_features[:,2:]
+        jheats_pred, jhoffs_pred = jout[:,:2], jout[:,2:]
+        
+        loss_dict['loss_heatmap'] = torch.mean((self.loss(heatmaps_pred,annotations['heatmap'][:,0].long()))*valid_mask)
+        loss_dict['loss_jmap'] = torch.mean((self.loss(jheats_pred,targets['jmap-hr'][:,0].long()))*valid_mask)
+        loss_dict['loss_johr'] = sigmoid_l1_loss(jhoffs_pred,targets['joff-hr'], -0.5, targets['jmap-hr'])
         # junc = metas[0]['junc'].cpu().numpy()*4
         # import matplotlib.pyplot as plt
         # plt.imshow(images[0,0].cpu())
@@ -547,7 +597,6 @@ class HAWP_heatmap(HAWPBase):
         # import pdb; pdb.set_trace()
         extra_info = defaultdict(list)
 
-                
         loi_features = self.fc1(features)
         loi_features_thin = self.fc3(features)
         loi_features_aux = self.fc4(features)
@@ -556,18 +605,18 @@ class HAWP_heatmap(HAWPBase):
         md_pred = output[:,:3].sigmoid()
         dis_pred = output[:,3:4].sigmoid()
         res_pred = output[:,4:5].sigmoid()
-        jloc_pred= output[:,5:7].softmax(1)[:,1:]
+        jloc_pred = output[:,5:7].softmax(1)[:,1:]
         joff_pred= output[:,7:9].sigmoid() - 0.5
-        
-        # regional_scores = 
 
-        # lines_batch = []
+        jheats_pred = jheats_pred.softmax(1)[:,1:]
+        jhoffs_pred = jhoffs_pred.sigmoid() - 0.5
+
 
         batch_size = md_pred.size(0)
 
         lines_batch = self.hafm_decoding(md_pred, dis_pred, res_pred if self.use_residual else None, flatten=False, scale=self.hafm_encoder.dis_th)
         
-        loss_dict_, extra_info = self.refinement_train(lines_batch, jloc_pred, joff_pred, loi_features, loi_features_thin,loi_features_aux, metas)
+        loss_dict_, extra_info = self.refinement_train(lines_batch, jloc_pred.detach(), joff_pred.detach(), jheats_pred, jhoffs_pred, loi_features, loi_features_thin,loi_features_aux, metas)
 
         
         loss_dict['loss_pos'] += loss_dict_['loss_pos']
@@ -616,7 +665,7 @@ class HAWP_heatmap(HAWPBase):
 
         return loss_dict, extra_info
 
-    def refinement_train(self, lines_batch, jloc_pred, joff_pred, loi_features, loi_features_thin, loi_features_aux, metas):
+    def refinement_train(self, lines_batch, jloc_pred, joff_pred, jlocs_hr_pred, joffs_hr_pred, loi_features, loi_features_thin, loi_features_aux, metas):
         loss_dict = defaultdict(float)
         extra_info = defaultdict(float)
         batch_size = lines_batch.shape[0]
@@ -655,7 +704,8 @@ class HAWP_heatmap(HAWPBase):
             
             N = junction_gt.size(0)   
 
-            juncs_pred, _ = self.get_junctions(self.non_maximum_suppression(jloc_pred[i]),joff_pred[i], topk=min(N*2+2,self.n_dyn_junc))
+            juncs_pred, juncs_score = self.get_junctions(self.non_maximum_suppression(jloc_pred[i]),joff_pred[i], topk=min(N*2+2,self.n_dyn_junc))
+            juncs_pred = self.refine_junctions(juncs_pred,juncs_score, jlocs_hr_pred[i,0], joffs_hr_pred[i])
             # juncs_pred = junction_gt.clone()
             dis_junc_to_end1, idx_junc_to_end1 = torch.sum((lines_pred[:,:2]-juncs_pred[:,None])**2,dim=-1).min(0)
             dis_junc_to_end2, idx_junc_to_end2 = torch.sum((lines_pred[:, 2:] - juncs_pred[:, None]) ** 2, dim=-1).min(0)
