@@ -147,6 +147,46 @@ class HAWPBase(nn.Module):
         else:
             return junctions, scores
 
+    @staticmethod
+    def refine_junctions(jpred_low_res, jscore, jloc_hr, joff_hr):
+        device = jloc_hr.device
+        x_ceil = jpred_low_res[:,0].ceil().long()
+        y_ceil = jpred_low_res[:,1].ceil().long()
+        x_floor = (x_ceil - 1)
+        y_floor = (y_ceil - 1)
+        x_ceil *= 4
+        y_ceil *= 4
+        x_floor *= 4
+        y_floor *= 4
+
+        kernel_x, kernel_y = torch.meshgrid(torch.arange(0,4,device=device), torch.arange(0,4,device=device),indexing='xy')
+        kernel_x = kernel_x.reshape(-1)
+        kernel_y = kernel_y.reshape(-1)
+
+        xx = x_floor[:,None] + kernel_x[None,:]
+        yy = y_floor[:,None] + kernel_y[None,:]
+
+        values = jloc_hr[yy,xx]
+        offsets = joff_hr[:,yy,xx]
+
+        max_val, max_idx = values.max(dim=-1)
+
+
+        x = xx.gather(1,max_idx[:,None])
+        y = yy.gather(1,max_idx[:,None])
+        dx = offsets[0].gather(1,max_idx[:,None])
+        dy = offsets[1].gather(1,max_idx[:,None])
+
+        x_lr = (x.float()+dx)/4.0
+        y_lr = (y.float()+dy)/4.0
+
+        refined_j = torch.cat((x_lr,y_lr),dim=-1)
+
+        out = (jpred_low_res*jscore[:,None] + refined_j*max_val[:,None])/ (jscore[:,None] + max_val[:,None])
+
+        
+        return out
+        
 if __name__ == "__main__":
     base = HAWPBase()
     import pdb; pdb.set_trace()
