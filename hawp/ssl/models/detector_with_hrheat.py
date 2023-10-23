@@ -8,6 +8,7 @@ import numpy as np
 import time
 
 from hawp.fsl.backbones import build_backbone
+from hawp.base import WireframeGraph
 from .hafm import HAFMencoder
 from .base import HAWPBase
 from .losses import *
@@ -216,6 +217,7 @@ class HAWP_heatmap(HAWPBase):
         sarg = torch.argsort(scores,descending=True)
 
         lines_final = lines_adjusted[sarg]
+        idx_pairs = perm[sarg]
         score_final = scores[sarg]
         lines_before = lines_init[sarg]
 
@@ -237,6 +239,8 @@ class HAWP_heatmap(HAWPBase):
         juncs_final[:,0] *= sx
         juncs_final[:,1] *= sy
 
+        wireframe = WireframeGraph(juncs_final, juncs_score, idx_pairs, score_final, annotations[0]['width'], annotations[0]['height'])
+
         output = {
             'lines_pred': lines_final,
             'lines_score': score_final,
@@ -246,6 +250,7 @@ class HAWP_heatmap(HAWPBase):
             'filename': annotations[0]['filename'],
             'width': annotations[0]['width'],
             'height': annotations[0]['height'],
+            'wireframe': wireframe,
         }
 
         return output, extra_info
@@ -530,10 +535,9 @@ class HAWP_heatmap(HAWPBase):
         final_juncs = juncs_pred
         final_juncs[:,0] *= sx
         final_juncs[:,1] *= sy
-        
+
 
         is_valid_line = final_scores>threshold
-        
         
         output = {
             'md_pred': md_pred,
@@ -541,7 +545,7 @@ class HAWP_heatmap(HAWPBase):
             'lines_pred': lines_final[is_valid_line],
             'lines_score': final_scores[is_valid_line],
             'juncs_pred': final_juncs,
-            # 'juncs_score': juncs_score,
+            'juncs_score': juncs_pred_score,
             'num_proposals': lines_adjusted.size(0),
             'filename': annotations[0]['filename'],
             'width': annotations[0]['width'],
