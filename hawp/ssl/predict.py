@@ -89,9 +89,9 @@ def main():
             'height':ori_shape[0],
             'filename': ''
         }
+
         with torch.no_grad():
             outputs, _ = model(image_,[meta])
-        # import pdb; pdb.set_trace()
 
         fig_file = None if args.saveto is None or args.ext in ['txt','json']else osp.join(args.saveto,pname.with_suffix('.'+args.ext).name)
 

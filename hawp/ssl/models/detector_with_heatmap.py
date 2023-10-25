@@ -456,7 +456,7 @@ class HAWP_heatmap(HAWPBase):
         for i in range(batch_size):
             jloc_pred_nms = self.non_maximum_suppression(jloc_pred[i])
             topK = min(self.num_junctions_inference, int((jloc_pred_nms>self.junction_threshold_hm).float().sum().item()))
-            juncs_pred, _ = self.get_junctions(jloc_pred_nms,joff_pred[i], topk=topK,th=self.junction_threshold_hm)
+            juncs_pred, juncs_score = self.get_junctions(jloc_pred_nms,joff_pred[i], topk=topK,th=self.junction_threshold_hm)
  
             lines_adjusted, lines_init, perm = self.wireframe_matcher(juncs_pred, lines_pred_batch[i])
 
@@ -478,12 +478,16 @@ class HAWP_heatmap(HAWPBase):
                 scores = logits.sigmoid()[:,0]
 
             final_scores = torch.sqrt(scores*scores_hm_adjust)
-            #final_scores = scores_hm_adjust
             
             threshold = kwargs.get('min_score',0.0)
 
-            lines_final = lines_adjusted*4
-            final_juncs = juncs_pred*4
+
+            sx = annotations[i]['width']/output.size(3)
+            sy = annotations[i]['height']/output.size(2)
+            sxsy = torch.tensor([sx,sy,sx,sy],dtype=lines_adjusted.dtype,device=lines_adjusted.device)
+
+            lines_final = lines_adjusted*sxsy[None]
+            final_juncs = juncs_pred*sxsy[None,:2]
 
             is_valid_line = final_scores>threshold
         
@@ -494,7 +498,7 @@ class HAWP_heatmap(HAWPBase):
                 'lines_pred': lines_final[is_valid_line],
                 'lines_score': final_scores[is_valid_line],
                 'juncs_pred': final_juncs,
-                # 'juncs_score': juncs_score,
+                'juncs_score': juncs_score,
                 'num_proposals': lines_adjusted.size(0),
                 'filename': annotations[0]['filename'],
                 'width': annotations[0]['width'],
