@@ -71,7 +71,7 @@ class HAWPBase(nn.Module):
 
         return xp.flatten(1)
 
-    def hafm_decoding(self,md_maps, dis_maps, residual_maps, scale=5.0, flatten = True):
+    def hafm_decoding(self,md_maps, dis_maps, residual_maps, scale=5.0, flatten = True, return_points = False):
 
         device = md_maps.device
         scale = self.distance_threshold
@@ -118,7 +118,13 @@ class HAWPBase(nn.Module):
         lines = torch.stack((x_st_final,y_st_final,x_ed_final,y_ed_final),dim=-1)
         if flatten:
             lines = lines.reshape(batch_size,-1,4)
-
+        if return_points:
+            points = torch.stack((x0,y0),dim=-1)
+            points = points.repeat((batch_size,2*self.num_residuals+1,1,1,1))
+            if flatten:
+                points = points.reshape(batch_size,-1,2)
+            return lines, points
+        
         return lines
     
     @staticmethod

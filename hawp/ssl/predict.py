@@ -73,10 +73,10 @@ def main():
     show.Canvas.show = not args.disable_show
     painter = show.painters.HAWPainter()
 
-    for fname in tqdm(args.img):
+    image_list = [cv2.imread(fname,0) for fname in args.img]
+    for fname, image in zip(tqdm(args.img),image_list):
         pname = Path(fname)
-        image = cv2.imread(fname,0)
-        
+        # image = cv2.imread(fname,0)
         ori_shape = image.shape[:2]
         image_cp = copy.deepcopy(image)
         image_ = cv2.resize(image_cp,(width,height))
